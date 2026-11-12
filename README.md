@@ -7,7 +7,7 @@
 👉 **https://tillwassenhoven1-glitch.github.io/Neon-Bay/**
 
 Keine Installation, kein Konto nötig – läuft auf Handy, iPad und PC. 🎮
-*Version 0.3.1 · Open Beta*
+*Version 0.3.2 · Open Beta*
 
 ---
 
@@ -23,6 +23,8 @@ Keine Installation, kein Konto nötig – läuft auf Handy, iPad und PC. 🎮
 
 - 🏙️ Große 3D-Welt: Innenstadt mit Hochhäusern, Land mit Feldern & Wald, **Berginsel mit Serpentinen** und **Sandland** mit Sandtown
 - 🛣️ **Autobahn A1** mit 3 Spuren, Verkehr der überholt, und **Stadtautobahn** auf Pfeilern quer durch die Stadt
+- 🚦 Ampeln & 🛑 Stoppschilder – der Verkehr hält an
+- 🛣️ Kurvige Landstraßen und abgerundete Straßenecken
 - 🌉 Schrägseilbrücke, ⤴️ Sprungschanzen und zerstörbare Zäune
 - 🔧 Tuning-Werkstatt – Farbe, Motor, Turbo, Felgen & Reparatur
 - 🔫 Waffenladen & GTA-Waffenrad (Messer, Pistole, Schrotflinte, MP, Granaten)
