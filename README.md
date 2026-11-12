@@ -4,7 +4,7 @@
 
 ## ▶️ [Jetzt spielen](https://tillwassenhoven1-glitch.github.io/Neon-Bay/)
 
-👉 **https://tillwassenhoven1-glitch.github.io/neon-bay/**
+👉 **https://tillwassenhoven1-glitch.github.io/Neon-Bay/**
 
 Keine Installation, kein Konto nötig – läuft auf Handy, iPad und PC. 🎮
 *Version 0.4 · Open Beta*
