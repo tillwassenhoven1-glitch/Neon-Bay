@@ -143,6 +143,24 @@ body.inside #mmhit{display:none}
 .mbox{max-height:90vh;overflow:auto}
 #mapx{position:fixed;left:14px;top:14px;z-index:10;display:none;padding:10px 16px;border-radius:12px;border:2px solid rgba(255,255,255,.3);background:rgba(214,40,40,.85);color:#fff;font:800 15px system-ui;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.5)}
 #mapx.open{display:block}
+#pause .pbox{width:min(640px,94vw);max-height:92vh;overflow:auto;background:linear-gradient(160deg,#1c1530,#0f1220);border:2px solid rgba(255,255,255,.15);border-radius:18px;padding:18px 20px;color:#fff;box-shadow:0 20px 60px rgba(0,0,0,.7);-webkit-overflow-scrolling:touch;touch-action:pan-y}
+#pause .phead{display:flex;align-items:center;justify-content:space-between;gap:10px}#pause h1{margin:0;font:900 34px Impact,"Arial Black",sans-serif;letter-spacing:2px}#pause .phead .mx{position:static;flex:none}
+.ptabs{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}.ptabs button{flex:1;min-width:92px;padding:9px 6px;border-radius:10px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font:700 14px system-ui;cursor:pointer}.ptabs button.on{background:linear-gradient(90deg,#ff3cac,#ffb000);border-color:transparent}
+.prow{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid rgba(255,255,255,.08);font:600 15px system-ui}.prow span{flex:1}.prow b{min-width:52px;text-align:right}
+.prow input[type=range]{flex:1;max-width:230px;accent-color:#ff3cac;height:30px;touch-action:none}
+.tog{min-width:72px;padding:8px 12px;border-radius:20px;border:none;background:#3a3f4b;color:#fff;font:800 13px system-ui;cursor:pointer}.tog.on{background:#2ecc71}
+.chs{display:flex;gap:6px}.ch{padding:8px 12px;border-radius:10px;border:2px solid rgba(255,255,255,.15);background:transparent;color:#fff;font:700 13px system-ui;cursor:pointer}.ch.on{background:#ff3cac;border-color:#ff3cac}
+.psec{margin:16px 0 8px;font:800 12px system-ui;letter-spacing:1.5px;opacity:.65}
+.kgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.krow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#fff;font:600 13px system-ui;cursor:pointer;text-align:left}
+.krow kbd{background:#fff;color:#111;border-radius:6px;padding:3px 8px;font:800 12px system-ui;white-space:nowrap}.krow.wait{border-color:#ffd23f;animation:kblink .6s infinite alternate}@keyframes kblink{to{background:rgba(255,210,63,.25)}}
+@media (max-width:540px){.kgrid{grid-template-columns:1fr}}
+.pmain{display:flex;flex-direction:column;align-items:stretch}.pmain .btn{margin:6px 0 8px}
+.pbtn{display:block;width:100%;margin-top:8px;padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:#fff;font:800 16px system-ui;cursor:pointer}.pbtn small{font-weight:600;opacity:.7;font-size:11px}.pbtn.red{background:rgba(214,40,40,.3);border-color:rgba(214,40,40,.7)}
+.pquick{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:4px}.pquick button{padding:12px 4px;border-radius:12px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:#fff;font:800 14px system-ui;cursor:pointer}
+.pver,.pnote{opacity:.6;font:600 12px system-ui;text-align:center;margin-top:10px}
+#tacho{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:6;display:none;color:#fff;font:900 36px/1 Impact,"Arial Black",sans-serif;text-shadow:0 2px 0 #000,0 0 10px rgba(0,0,0,.8);text-align:center;pointer-events:none}#tacho small{display:block;font:800 11px system-ui;opacity:.8;letter-spacing:2px}
+#dtop{position:fixed;left:12px;top:12px;z-index:8;display:none;gap:6px}#dtop button{padding:7px 10px;border-radius:10px;border:2px solid rgba(255,255,255,.25);background:rgba(0,0,0,.55);color:#fff;font:700 13px system-ui;cursor:pointer}#dtop button:hover{background:rgba(255,60,172,.6)}#dtop kbd{background:#fff;color:#111;border-radius:4px;padding:0 5px;font:800 11px system-ui;margin-left:3px}
+#fpsEl{position:fixed;left:12px;top:60px;z-index:6;display:none;color:#86f06b;font:700 12px monospace;background:rgba(0,0,0,.45);padding:2px 6px;border-radius:6px;pointer-events:none}
 .mbox{position:relative}.mbox h2{padding-right:46px}
 .mx{position:absolute;top:10px;right:10px;width:42px;height:42px;border-radius:50%;border:2px solid rgba(255,255,255,.4);background:#d62828;color:#fff;font:900 20px system-ui;cursor:pointer;z-index:3;box-shadow:0 3px 12px rgba(0,0,0,.5);padding:0;line-height:38px}
 .mx:active{transform:scale(.9)}
@@ -298,7 +316,7 @@ body.ingarage #touch,body.ingarage #mmhit,body.ingarage #help,body.ingarage .pro
     <input id="cinput" class="cin" maxlength="4" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Code tippen…"><div class="kp2"><button id="cx">✕ Abbrechen</button><button id="cok">✔ OK</button></div><div id="cmsg"></div></div>
   <div id="clist" style="display:none"><h2>🎮 CHEAT-MENÜ</h2><div id="ctg"></div><button class="gbtn back" id="cclose" style="width:100%;margin-top:10px">Schließen</button></div>
 </div></div>
-<div id="start" class="overlay"><div id="ver" style="position:absolute;left:12px;bottom:10px;font:700 13px system-ui;color:rgba(255,255,255,.75);background:rgba(0,0,0,.35);padding:4px 10px;border-radius:8px">Version 0.2 · Open Beta</div>
+<div id="start" class="overlay"><div id="ver" style="position:absolute;left:12px;bottom:10px;font:700 13px system-ui;color:rgba(255,255,255,.75);background:rgba(0,0,0,.35);padding:4px 10px;border-radius:8px">Version 0.3 · Open Beta</div>
   <div class="box">
     <h1>NEON BAY</h1>
     <div class="sub">3D · OPEN WORLD · WANTED LEVEL</div>
@@ -315,7 +333,9 @@ body.ingarage #touch,body.ingarage #mmhit,body.ingarage #help,body.ingarage .pro
     <div class="small">🔫 Waffenladen · 🔧 Tuning · 🏪 Läden · 🏦 Bank · 🏁 Rennen · 🚕 Taxi · 🏠 Safehouse · 🚤 Boote</div>
   </div>
 </div>
-<div id="pause" class="overlay hide"><div class="box"><h1 style="font-size:70px">PAUSE</h1><button class="btn" id="resumeBtn">▶ WEITER</button></div></div>
+<div id="pause" class="overlay hide"><div class="pbox"><div class="phead"><h1>⏸ MENÜ</h1><button class="mx" id="px">✕</button></div><div class="ptabs"><button data-t="main" class="on">🏠 Menü</button><button data-t="ctrl">🎮 Steuerung</button><button data-t="gfx">🖥️ Grafik</button><button data-t="snd">🔊 Ton</button><button data-t="hud">📋 Anzeige</button></div><div id="pbody"></div></div></div>
+<div id="dtop"><button data-k="Escape">⚙️ Menü <kbd>Esc</kbd></button><button data-k="KeyP">📱 Handy <kbd>P</kbd></button><button data-k="KeyI">🎒 Inventar <kbd>I</kbd></button><button data-k="KeyM">🗺️ Karte <kbd>M</kbd></button><button data-k="KeyK">💻 Cheats <kbd>K</kbd></button></div>
+<div id="tacho"></div><div id="fpsEl"></div>
 <div id="inv" class="overlay hide"><div class="mbox ibox"><button class="mx" id="ix">✕</button><h2>🎒 INVENTAR</h2><div id="ibody"></div><div id="lotto" style="display:none"></div><button class="gbtn back" id="iclose" style="width:100%;margin-top:12px">Schließen</button></div></div>
 <div id="modal" class="overlay hide"><div class="mbox"><button class="mx" id="mx">✕</button><h2 id="mtitle"></h2><div id="mbody"></div><div id="mbtns"></div></div></div>
 
@@ -878,16 +898,16 @@ function makeCop(x,y,home){const p=makePed(x,y);Object.assign(p,{cop:true,hp:45,
 
 // ================= INPUT =================
 const keys={},pressed={},joy={x:0,y:0,active:false,id:null,ox:0,oy:0};
-window.addEventListener('keydown',e=>{if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Tab'].includes(e.code))e.preventDefault();
-  if(!keys[e.code])pressed[e.code]=true;keys[e.code]=true;initAudio()});
-window.addEventListener('keyup',e=>{keys[e.code]=false});
+window.addEventListener('keydown',e=>{if(rebindAct){e.preventDefault();doRebind(e.code);return}if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Tab'].includes(e.code))e.preventDefault();
+  const k=mapKey(e.code);if(!keys[k])pressed[k]=true;keys[k]=true;initAudio()});
+window.addEventListener('keyup',e=>{keys[mapKey(e.code)]=false});
 window.addEventListener('blur',()=>{for(const k in keys)keys[k]=false});
 const glc=renderer.domElement;
 window.addEventListener('mouseup',e=>{if(e.button===0)keys.Mouse=false});
 glc.addEventListener('mousedown',e=>{initAudio();if(e.button===0){pressed.Mouse=true;keys.Mouse=true;
-  if(!isTouch&&state==='play'&&!mapOpen&&document.pointerLockElement!==glc&&glc.requestPointerLock){try{const r=glc.requestPointerLock();if(r&&r.catch)r.catch(()=>{})}catch(err){}}}});
+  if(!isTouch&&!noLock&&state==='play'&&!mapOpen&&document.pointerLockElement!==glc&&glc.requestPointerLock){try{const r=glc.requestPointerLock();if(r&&r.catch)r.catch(()=>lockFail())}catch(err){lockFail()}}}});
 glc.addEventListener('contextmenu',e=>e.preventDefault());
-window.addEventListener('mousemove',e=>{if(state==='garage'&&garage&&(e.buttons&1)&&!(e.target.closest&&e.target.closest('#garage'))){garage.drag+=e.movementX*.008;return}if(state!=='play')return;if(document.pointerLockElement===glc||(e.buttons&2)){camYaw+=e.movementX*.0026;camPitch=clamp(camPitch+e.movementY*.0018,.06,.95);manualT=1.4}});
+window.addEventListener('mousemove',e=>{if(state==='garage'&&garage&&(e.buttons&1)&&!(e.target.closest&&e.target.closest('#garage'))){garage.drag+=e.movementX*.008;return}if(state!=='play')return;if(document.pointerLockElement===glc||(e.buttons&2)||(noLock&&(e.buttons&1))){camYaw+=e.movementX*.0026*SET.sens;camPitch=clamp(camPitch+(SET.invY?-1:1)*e.movementY*.0018*SET.sens,.06,.95);manualT=1.4}});
 const tap=k=>{if(pressed[k]){pressed[k]=false;return true}return false};
 // touch
 if(isTouch){const jz=$('joyzone'),joyEl=$('joy'),knob=$('knob');
@@ -896,7 +916,7 @@ if(isTouch){const jz=$('joyzone'),joyEl=$('joy'),knob=$('knob');
   const jend=e=>{if(e.pointerId!==joy.id)return;joy.active=false;joy.x=joy.y=0;joy.id=null;joyEl.style.display='none'};jz.addEventListener('pointerup',jend);jz.addEventListener('pointercancel',jend);
   const cz=$('camzone');let cid=null,cx0=0,cy0=0;
   cz.addEventListener('pointerdown',e=>{e.preventDefault();initAudio();cid=e.pointerId;cx0=e.clientX;cy0=e.clientY;try{cz.setPointerCapture(e.pointerId)}catch(er){}});
-  cz.addEventListener('pointermove',e=>{if(e.pointerId!==cid)return;camYaw+=(e.clientX-cx0)*.008;camPitch=clamp(camPitch+(e.clientY-cy0)*.004,.06,.95);cx0=e.clientX;cy0=e.clientY;manualT=1.5});
+  cz.addEventListener('pointermove',e=>{if(e.pointerId!==cid)return;camYaw+=(e.clientX-cx0)*.008*SET.sens;camPitch=clamp(camPitch+(SET.invY?-1:1)*(e.clientY-cy0)*.004*SET.sens,.06,.95);cx0=e.clientX;cy0=e.clientY;manualT=1.5});
   const cend=e=>{if(e.pointerId===cid)cid=null};cz.addEventListener('pointerup',cend);cz.addEventListener('pointercancel',cend);
   document.querySelectorAll('[data-k]').forEach(b=>{const k=b.dataset.k;
     b.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();initAudio();keys[k]=true;pressed[k]=true;b.classList.add('on')});
@@ -904,7 +924,7 @@ if(isTouch){const jz=$('joyzone'),joyEl=$('joy'),knob=$('knob');
 
 // ================= AUDIO & RADIO =================
 let AC=null,master,engG,engO,engO2,engLP,engRpm=0,sirG,sirO,radioG,muted=false,noiseBuf=null;
-function initAudio(){if(AC)return;try{const A=window.AudioContext||window.webkitAudioContext;if(!A)return;AC=new A();master=AC.createGain();master.gain.value=.6;master.connect(AC.destination);
+function initAudio(){if(AC)return;try{const A=window.AudioContext||window.webkitAudioContext;if(!A)return;AC=new A();master=AC.createGain();master.gain.value=.6*SET.vol/100;master.connect(AC.destination);
   engO=AC.createOscillator();engO.type='sawtooth';engO2=AC.createOscillator();engO2.type='square';engG=AC.createGain();engG.gain.value=0;const lp=AC.createBiquadFilter();engLP=lp;lp.type='lowpass';lp.frequency.value=380;lp.Q.value=2;const g2=AC.createGain();g2.gain.value=.5;engO.connect(lp);engO2.connect(g2);g2.connect(lp);lp.connect(engG);engG.connect(master);engO.start();engO2.start();
   sirO=AC.createOscillator();sirO.type='triangle';sirG=AC.createGain();sirG.gain.value=0;sirO.connect(sirG);sirG.connect(master);sirO.start();
   radioG=AC.createGain();radioG.gain.value=0;const rl=AC.createBiquadFilter();rl.type='lowpass';rl.frequency.value=4200;radioG.connect(rl);rl.connect(master);
@@ -946,7 +966,7 @@ const STATIONS=[
 let radioIdx=Math.floor(Math.random()*3),radioNext=0,radioStep=0;
 function showRadio(){const st=STATIONS[radioIdx],el=$('radio');el.innerHTML='<b>📻 '+st.name+'</b>'+st.sub;el.classList.add('show');clearTimeout(showRadio.h);showRadio.h=setTimeout(()=>el.classList.remove('show'),2400)}
 function radioTick(){if(!AC||!radioG)return;const st=STATIONS[radioIdx],on=!!(player.car&&!muted&&state==='play'&&st.f);
-  radioG.gain.setTargetAtTime(on?.55:0,AC.currentTime,.12);if(!on){radioNext=0;return}
+  radioG.gain.setTargetAtTime(on?.55*SET.radio/100:0,AC.currentTime,.12);if(!on){radioNext=0;return}
   const d=60/st.bpm/4;if(radioNext<AC.currentTime)radioNext=AC.currentTime+.05;
   while(radioNext<AC.currentTime+.18){st.f(radioStep,radioNext,d);radioNext+=d;radioStep++}}
 
@@ -1640,7 +1660,7 @@ function update(dt){
   gameMin+=dt*6;if(state==='play'&&stars===0&&player.hp<100)player.hp=Math.min(100,player.hp+dt*1.5);tutT+=dt;manualT-=dt;shake=Math.max(0,shake-dt*25);boomLight.intensity=Math.max(0,boomLight.intensity-dt*6);
   if(state==='play'){const ar=districtAt(player.x,player.y);if(ar!==lastArea){lastArea=ar;const el=$('area');el.innerHTML='<small>NEON BAY</small>'+ar;el.classList.add('show');clearTimeout(update.ah);update.ah=setTimeout(()=>el.classList.remove('show'),3200)}}
   if(AC){const t=AC.currentTime,c=player.car,sp=c?hyp(c.vx,c.vy):0;{const on=!muted&&c&&!c.wrecked&&state==='play';let f0=40,vol=0;if(on){const ab=Math.abs(c.speed||0),gs=c.spec.max/(c.type==='boat'?3:5),gr=Math.min(4,Math.floor(ab/gs)),rp=clamp((ab-gr*gs)/gs,0,1),th=Math.abs(player.inp.thr||0);engRpm=lerp(engRpm,.15+rp*.8+th*.1,Math.min(1,lastDt*8+.05));
-      const base=c.type==='bike'?58:c.type==='boat'?36:c.type==='sports'?50:c.type==='van'||c.type==='fire'?32:42;f0=base*(1+engRpm*1.9);vol=(.06+th*.05+engRpm*.05)*(c.hp<c.maxhp*.4?(.7+Math.random()*.6):1);engLP.frequency.setTargetAtTime(280+engRpm*1300+th*400,t,.05)}
+      const base=c.type==='bike'?58:c.type==='boat'?36:c.type==='sports'?50:c.type==='van'||c.type==='fire'?32:42;f0=base*(1+engRpm*1.9);vol=SET.engine/100*(.06+th*.05+engRpm*.05)*(c.hp<c.maxhp*.4?(.7+Math.random()*.6):1);engLP.frequency.setTargetAtTime(280+engRpm*1300+th*400,t,.05)}
     engG.gain.setTargetAtTime(vol,t,.08);engO.frequency.setTargetAtTime(f0,t,.04);engO2.frequency.setTargetAtTime(f0*.5,t,.04)}
     let near=1e9;for(const c2 of cars)if(c2.siren){const d=d2(c2,player);if(d<near)near=d}sirG.gain.setTargetAtTime(muted?0:clamp(1-near/750,0,1)*.03,t,.1);sirO.frequency.setTargetAtTime(760+260*Math.sin(now*3.5),t,.05)}
   radioTick()}
@@ -1821,15 +1841,15 @@ function updateCamera(rdt){
     camera.lookAt(c.x+Math.sin(yaw)*sh,9,c.y-Math.cos(yaw)*sh);camera.fov=lerp(camera.fov,55,.1);camera.updateProjectionMatrix();cam.x=c.x;cam.y=c.y;return}
   const c=player.car,tgt=c||player;
   if(state==='wasted'||state==='busted')camYaw+=rdt*.5;
-  else if(c){if(manualT<=0){const vh=Math.abs(c.speed)>25&&c.speed<0?c.a+Math.PI*0:c.a;camYaw+=angDiff(camYaw,vh)*Math.min(1,rdt*3.2)}camPitch=lerp(camPitch,.24,rdt*.5)}
-  else if(manualT<=0&&player.move>.3&&!player.backward)camYaw+=angDiff(camYaw,player.a)*Math.min(1,rdt*1.3);
+  else if(c){if(manualT<=0&&SET.autoCam){const vh=Math.abs(c.speed)>25&&c.speed<0?c.a+Math.PI*0:c.a;camYaw+=angDiff(camYaw,vh)*Math.min(1,rdt*3.2)}camPitch=lerp(camPitch,.24,rdt*.5)}
+  else if(SET.autoCam&&manualT<=0&&player.move>.3&&!player.backward)camYaw+=angDiff(camYaw,player.a)*Math.min(1,rdt*1.3);
   const sp=c?hyp(c.vx,c.vy):0;const want=c?(c.type==='bike'?62:c.type==='boat'?105:c.type==='van'?100:85)+sp*.06:56;
   const fx=Math.cos(camYaw),fy=Math.sin(camYaw);let d=want;for(let s=10;s<=want;s+=5){const b=inBuilding(tgt.x-fx*s*Math.cos(camPitch),tgt.y-fy*s*Math.cos(camPitch));if(b&&b.H>s*Math.sin(camPitch)+(c?14:20)){d=Math.max(14,s-8);break}}
   camDist=lerp(camDist,d,Math.min(1,rdt*(d<camDist?10:2.5)));
   const fh=(c?14:20)+Math.max(c&&c.air?c.ay:groundH(tgt.x,tgt.y),tgt.z||0);const sx=(R()-.5)*shake*.6,sy=(R()-.5)*shake*.6;
   camPos.set(tgt.x-fx*camDist*Math.cos(camPitch)+sx,fh+camDist*Math.sin(camPitch)+sy,tgt.y-fy*camDist*Math.cos(camPitch));
   {const gc=groundH(camPos.x,camPos.z);if(camPos.y<gc+9)camPos.y=gc+9}camera.position.lerp(camPos,c?Math.min(1,rdt*12):1);camLook.set(tgt.x+fx*22,fh,tgt.y+fy*22);camera.lookAt(camLook);
-  cam.x=tgt.x;cam.y=tgt.y;camera.fov=lerp(camera.fov,62+clamp(sp/340,0,1)*10,rdt*3);camera.updateProjectionMatrix()}
+  cam.x=tgt.x;cam.y=tgt.y;camera.fov=lerp(camera.fov,SET.fov+clamp(sp/340,0,1)*10,rdt*3);camera.updateProjectionMatrix()}
 
 // ================= RENDER =================
 const _col=new THREE.Color();
@@ -1945,7 +1965,7 @@ function legendTick(){const want=mapOpen&&state==='play';if(want!==legendOpen){l
 // ================= DOM HUD =================
 const moneyEl=$('money'),starEls=[...document.querySelectorAll('.star')],hpEl=$('hp'),arEl=$('ar'),clockEl=$('clock'),helpEl=$('help'),hudEl=$('hud'),weapEl=$('weap');
 let lastMoney=-1,lastStars=-1,lastHelp='',lastW='',lastBtn='';
-function hudDom(){intxTick();const m=Math.floor(player.money);if(m!==lastMoney){moneyEl.textContent='$'+m.toLocaleString('de-DE');lastMoney=m}
+function hudDom(){intxTick();tachoTick();dtopTick();const m=Math.floor(player.money);if(m!==lastMoney){moneyEl.textContent='$'+m.toLocaleString('de-DE');lastMoney=m}
   if(stars!==lastStars){starEls.forEach((s,i)=>{const on=i<stars;if(on&&!s.classList.contains('on')){s.classList.remove('pop');void s.offsetWidth;s.classList.add('pop')}s.classList.toggle('on',on)});if(stars>lastStars&&lastStars>=0&&state==='play')sfx.star();lastStars=stars}
   const bl=stars>0&&escT>1;starEls.forEach(s=>s.classList.toggle('blink',bl&&s.classList.contains('on')));
   hpEl.style.width=player.hp+'%';arEl.style.width=player.armor+'%';$('arwrap').style.display=player.armor>0?'block':'none';hudEl.style.display=state==='start'?'none':'';
@@ -1957,7 +1977,7 @@ function hudDom(){intxTick();const m=Math.floor(player.money);if(m!==lastMoney){
     if(player.bustT>0)t='🚨 <b>Festnahme!</b> Lauf weg!';else if(player.car&&player.car.burning)t='🔥 Das Fahrzeug brennt – raus mit <b>'+K('F','🚪')+'</b>!';
     else if(!player.car&&cheats.fly&&!player.air)t='🕊️ Fliegen: <b>'+K('Leertaste','⬆️')+'</b> hoch · <b>'+K('C','⬇️')+'</b> runter · <b>'+K('Shift','🏃')+'</b> schnell';
     else if(player.car&&cheats.flyCar&&(player.car.z||0)<3)t='🛸 <b>'+K('Leertaste','⬆️')+'</b> abheben · <b>'+K('Shift','⬇️')+'</b> sinken';
-    else if(tutT<6)t=isTouch?'Willkommen in <b>Neon Bay 3D</b> 🌴<br>Links ziehen = laufen · 🏃 halten = sprinten · rechts wischen = Kamera':'Willkommen in <b>Neon Bay 3D</b> 🌴<br><b>WASD</b> laufen · <b>Shift</b> sprinten · <b>Maus</b> Kamera (ins Bild klicken) · <b>P</b> Handy · <b>M</b> Karte';
+    else if(tutT<6&&SET.tips)t=isTouch?'Willkommen in <b>Neon Bay 3D</b> 🌴<br>Links ziehen = laufen · 🏃 halten = sprinten · rechts wischen = Kamera':'Willkommen in <b>Neon Bay 3D</b> 🌴<br><b>WASD</b> laufen · <b>Shift</b> sprinten · <b>Maus</b> Kamera (ins Bild klicken) · <b>P</b> Handy · <b>M</b> Karte';
     if(!t&&stars>0)t=escT>1?'🔍 Die Polizei sucht dich – bleib versteckt! ('+Math.max(0,Math.ceil(escNeed()-escT))+' s)':''}
   if(t!==lastHelp){lastHelp=t;if(t){helpEl.innerHTML=t;helpEl.classList.add('show')}else helpEl.classList.remove('show')}}
 
@@ -1987,7 +2007,7 @@ function startGame(cont){initAudio();$('start').classList.add('hide');const sv=c
   else{state='loading';respawn()}tutT=0;try{window.focus()}catch(e){}}
 $('playBtn').addEventListener('click',()=>startGame(false));$('contBtn').addEventListener('click',()=>startGame(true));
 if(loadSave())$('contBtn').style.display='inline-block';
-$('resumeBtn').addEventListener('click',()=>{$('pause').classList.add('hide');state='play'});
+
 function globalKeys(){
   if(state==='start'){if(tap('Enter'))startGame(!!loadSave());return}
   if(state==='inv'){if(tap('Escape')||tap('KeyI'))closeInv();return}
@@ -1996,7 +2016,7 @@ function globalKeys(){
     if(tap('ArrowUp')||tap('KeyW')){garage.sel=(garage.sel-1+n)%n;if(garage.cat>=0)gPreview();gRender();sfx.click()}if(tap('Enter')||tap('Space')){if(garage.cat<0)gChoose(garage.sel);else gBuy()}if(tap('Escape')||tap('Backspace'))gBack();return}
   if(state==='cheat'){if(tap('Escape'))closeCheat();else if($('cpad').style.display==='none'&&tap('KeyK'))closeCheat();for(const k in pressed)delete pressed[k];return}
   if(state==='menu'){if(tap('Escape'))closeModal();for(let i=0;i<modalBtns.length;i++)if(tap('Digit'+(i+1))||tap('Numpad'+(i+1))){modalBtns[i].fn();break}return}
-  if(tap('Escape')){if(mapOpen)mapOpen=false;else if(phoneOpen)closePhone();else if(state==='play'){state='pause';$('pause').classList.remove('hide')}else if(state==='pause'){state='play';$('pause').classList.add('hide')}}
+  if(tap('Escape')){if(mapOpen)mapOpen=false;else if(phoneOpen)closePhone();else if(state==='play')openPause();else if(state==='pause')closePause()}
   if(state==='pause')return;
   if(tap('KeyK')&&state==='play')openCheat();
   if(tap('KeyI')&&state==='play')openInv();
@@ -2007,7 +2027,7 @@ function globalKeys(){
   if(tap('KeyP')||tap('Tab')){if(phoneOpen)closePhone();else if(state==='play'){openPhone();mapOpen=false}}
   if(phoneOpen){const apps=['map','car','law','heal','stats','time','cheat'];for(let i=0;i<7;i++)if(tap('Digit'+(i+1))||tap('Numpad'+(i+1)))phoneApp(apps[i]);if(tap('Backspace'))phoneApp('back')}}
 let last=performance.now(),lastDt=0;
-function frame(t){const rdt=Math.min(.05,Math.max(0,(t-last)/1000));last=t;globalKeys();
+function frame(t){fpsTick((t-last)/1000);const rdt=Math.min(.05,Math.max(0,(t-last)/1000));last=t;globalKeys();
   if(INT.active&&(state==='inside'||state==='menu'||state==='inv')){if(state==='inside')interiorTick(rdt);if(INT.active)renderInterior(rdt);drawHud();hudDom();prompts();for(const k in pressed)delete pressed[k];requestAnimationFrame(frame);return}
   let dt=rdt;if(state==='wasted'||state==='busted'){dt*=.3;overT+=rdt;if(overT>3.6)respawn()}
   if(state==='pause'||state==='menu'||state==='garage'||state==='cheat'||state==='inv')dt=0;if(wheelOpen)dt*=.2;if(state==='garage'&&garage)garageTick(rdt);now+=dt;lastDt=dt;if(dt>0)update(dt);
@@ -2083,6 +2103,62 @@ $('mx').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation(
 $('ix').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();sfx.ui();closeInv()});
 $('intx').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(state==='inside'&&INT.active){sfx.ui();exitStore()}});
 let intxOn=false;function intxTick(){const on=INT.active&&state==='inside';if(on!==intxOn){intxOn=on;$('intx').style.display=on?'block':'none'}}
+
+// ================= MENÜ & EINSTELLUNGEN =================
+const SET_DEF={sens:1,invY:false,autoCam:true,btn:1,quality:isTouch?'mittel':'hoch',fov:62,vol:80,radio:70,engine:80,tips:true,tacho:true,fps:false,binds:{}};
+let SET=Object.assign({},SET_DEF);try{const o=JSON.parse(localStorage.getItem('neonbay3d_settings')||'null');if(o)SET=Object.assign({},SET_DEF,o,{binds:o.binds||{}})}catch(e){}
+function saveSet(){try{localStorage.setItem('neonbay3d_settings',JSON.stringify(SET))}catch(e){}}
+const ACTIONS=[['KeyW','⬆️ Vorwärts / Gas'],['KeyS','⬇️ Rückwärts / Bremse'],['KeyA','⬅️ Links lenken'],['KeyD','➡️ Rechts lenken'],['ShiftLeft','🏃 Sprinten'],['Space','👊 Angriff / Handbremse'],['KeyF','🚗 Ein- / Aussteigen'],
+  ['KeyR','💰 Ausrauben / 📻 Radio'],['KeyQ','🔄 Waffenrad'],['KeyH','📯 Hupe'],['KeyT','🚕 Job starten'],['KeyP','📱 Handy'],['KeyI','🎒 Inventar'],['KeyM','🗺️ Karte'],['KeyC','⬇️ Runter (Fliegen)'],['KeyK','💻 Cheats'],['KeyN','🔇 Ton an/aus']];
+let PHY={},rebindAct=null,ptab='main';
+function buildPhy(){PHY={};for(const [a] of ACTIONS)PHY[SET.binds[a]||a]=a}buildPhy();
+function mapKey(c){if(PHY[c])return PHY[c];if(ACTIONS.some(z=>z[0]===c))return '_'+c;return c}
+function keyName(c){if(!c)return '—';if(c.startsWith('Key'))return c.slice(3);if(c.startsWith('Digit'))return c.slice(5);if(c.startsWith('Numpad'))return 'Num '+c.slice(6);
+  return {Space:'Leertaste',ShiftLeft:'Shift',ShiftRight:'Shift R',ControlLeft:'Strg',ControlRight:'Strg R',AltLeft:'Alt',AltRight:'Alt Gr',Tab:'Tab',Enter:'Enter',ArrowUp:'↑',ArrowDown:'↓',ArrowLeft:'←',ArrowRight:'→',Backspace:'⌫',CapsLock:'Feststell',Comma:',',Period:'.',Minus:'-'}[c]||c}
+function doRebind(code){const a=rebindAct;rebindAct=null;if(code!=='Escape'&&a){const old=SET.binds[a]||a;for(const [b] of ACTIONS)if(b!==a&&(SET.binds[b]||b)===code)SET.binds[b]=old;SET.binds[a]=code;
+    for(const k in SET.binds)if(SET.binds[k]===k)delete SET.binds[k];buildPhy();saveSet();sfx.ui()}renderPause()}
+function applySet(){try{renderer.setPixelRatio(Math.min(SET.quality==='niedrig'?1:SET.quality==='mittel'?1.5:2,window.devicePixelRatio||1));
+  scene.fog.far=SET.quality==='niedrig'?900:SET.quality==='mittel'?1150:1500;const sh=SET.quality==='hoch';
+  if(renderer.shadowMap.enabled!==sh){renderer.shadowMap.enabled=sh;sun.castShadow=sh;scene.traverse(o=>{if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.needsUpdate=true)})}}catch(e){}
+  if(master)master.gain.value=.6*SET.vol/100;const tb=$('tbtns');if(tb){tb.style.transform='scale('+SET.btn+')';tb.style.transformOrigin='100% 100%'}
+  $('fpsEl').style.display=SET.fps?'block':'none'}
+const FMT={sens:v=>(+v).toFixed(1)+'×',btn:v=>Math.round(v*100)+'%',fov:v=>v+'°',vol:v=>v+'%',radio:v=>v+'%',engine:v=>v+'%'};
+const slider=(id,label,min,max,step)=>'<div class="prow"><span>'+label+'</span><input type="range" data-s="'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+SET[id]+'"><b id="sv_'+id+'">'+FMT[id](SET[id])+'</b></div>';
+const toggle=(id,label,val)=>'<div class="prow"><span>'+label+'</span><button class="tog'+(val?' on':'')+'" data-g="'+id+'">'+(val?'AN':'AUS')+'</button></div>';
+const choice=(id,label,opts)=>'<div class="prow"><span>'+label+'</span><div class="chs">'+opts.map(o=>'<button class="ch'+(o===SET[id]?' on':'')+'" data-c="'+id+'" data-v="'+o+'">'+o+'</button>').join('')+'</div></div>';
+function renderPause(){document.querySelectorAll('#pause .ptabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===ptab));let h='';
+  if(ptab==='main')h='<div class="pmain"><button class="btn" data-a="resume">▶ WEITERSPIELEN</button><div class="pquick"><button data-q="KeyP">📱 Handy</button><button data-q="KeyI">🎒 Inventar</button><button data-q="KeyM">🗺️ Karte</button><button data-q="KeyK">💻 Cheats</button></div><button class="pbtn" data-a="ctrl">🎮 Steuerung</button><button class="pbtn" data-a="gfx">🖥️ Grafik</button><button class="pbtn" data-a="snd">🔊 Ton</button><button class="pbtn" data-a="hud">📋 Anzeige</button>'+
+    '<button class="pbtn red" data-a="title">🏠 Zum Startbildschirm <small>(nicht Gespeichertes geht verloren)</small></button><div class="pver">Neon Bay 3D · Version 0.3 · Open Beta</div></div>';
+  else if(ptab==='ctrl'){h=slider('sens','🖱️ Kamera-Empfindlichkeit',.3,2.5,.1)+toggle('invY','↕️ Kamera hoch/runter umdrehen',SET.invY)+toggle('autoCam','🎥 Kamera dreht automatisch mit',SET.autoCam)+(isTouch?slider('btn','👆 Größe der Touch-Buttons',.7,1.4,.05):'');
+    h+='<div class="psec">⌨️ TASTENBELEGUNG – antippen und neue Taste drücken'+(isTouch?' (Tastatur nötig)':'')+'</div><div class="kgrid">'+ACTIONS.map(([a,n])=>'<button class="krow'+(rebindAct===a?' wait':'')+'" data-b="'+a+'"><span>'+n+'</span><kbd>'+(rebindAct===a?'Taste drücken…':keyName(SET.binds[a]||a))+'</kbd></button>').join('')+
+      '</div><div class="pnote">Fest: Esc = Menü · 1–9 = Auswahl · Maus = Kamera'+(isTouch?' · Touch: links ziehen = laufen, rechts wischen = Kamera':'')+'</div><button class="pbtn" data-a="resetKeys">↩️ Tasten zurücksetzen</button>'}
+  else if(ptab==='gfx')h=choice('quality','✨ Grafik-Qualität',['niedrig','mittel','hoch'])+slider('fov','🔭 Sichtfeld',50,85,1)+toggle('fps','📈 FPS anzeigen',SET.fps)+'<div class="pnote">💡 Wenn das Spiel ruckelt: Qualität auf „niedrig“ stellen. „hoch“ schaltet Schatten an.</div>';
+  else if(ptab==='snd')h=slider('vol','🔊 Gesamt-Lautstärke',0,100,1)+slider('radio','📻 Radio',0,100,1)+slider('engine','🚗 Motor',0,100,1)+toggle('mute','🔇 Stumm',muted);
+  else if(ptab==='hud')h=toggle('tacho','🏎️ Tacho im Auto',SET.tacho)+toggle('tips','💡 Hilfe-Texte beim Start',SET.tips)+toggle('fps','📈 FPS anzeigen',SET.fps);
+  if(ptab!=='main')h+='<button class="pbtn" data-a="reset">↩️ Einstellungen zurücksetzen</button><button class="btn" data-a="resume">▶ WEITER</button>';
+  $('pbody').innerHTML=h}
+function openPause(){state='pause';ptab='main';rebindAct=null;renderPause();$('pause').classList.remove('hide');closeWheel(false);if(document.exitPointerLock&&document.pointerLockElement)document.exitPointerLock()}
+function closePause(){rebindAct=null;$('pause').classList.add('hide');if(state==='pause')state='play'}
+let noLock=false,lockHint=false,lockedOnce=false;function grabMouse(){if(isTouch||noLock||state!=='play'||mapOpen||document.pointerLockElement===glc||!glc.requestPointerLock)return;try{const r=glc.requestPointerLock();if(r&&r.catch)r.catch(()=>lockFail())}catch(err){lockFail()}}
+function lockFail(){if(noLock||lockedOnce)return;noLock=true;toast('🖱️ Maus kann hier nicht gefangen werden – halte die Maustaste gedrückt und zieh, um die Kamera zu drehen')}
+document.addEventListener('pointerlockerror',lockFail);
+document.addEventListener('pointerlockchange',()=>{if(document.pointerLockElement===glc){lockedOnce=true;return}setTimeout(()=>{if(!document.pointerLockElement&&state==='play'&&!mapOpen&&!phoneOpen&&!wheelOpen&&!isTouch)openPause()},150)});
+$('dtop').addEventListener('mousedown',e=>e.stopPropagation());$('dtop').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;e.stopPropagation();initAudio();sfx.ui();pressed[b.dataset.k]=true});
+let dtopOn=false;function dtopTick(){const on=!isTouch&&(state==='play'||state==='inside');if(on!==dtopOn){dtopOn=on;$('dtop').style.display=on?'flex':'none'}
+  if(!isTouch&&state==='play'&&!lockHint&&!noLock&&tutT>6&&document.pointerLockElement!==glc){lockHint=true;toast('🖱️ Klick ins Bild, um die Maus zu fangen · Esc = Menü')}}
+$('pause').addEventListener('click',e=>{const q=e.target.closest('[data-q]');if(q){sfx.ui();closePause();const k=q.dataset.q;setTimeout(()=>{pressed[k]=true},30);return}const t=e.target.closest('[data-t]');if(t){ptab=t.dataset.t;rebindAct=null;sfx.ui();renderPause();return}
+  const a=e.target.closest('[data-a]');if(a){const v=a.dataset.a;sfx.ui();if(v==='resume'){closePause();grabMouse()}else if(v==='title')location.reload();else if(v==='resetKeys'){SET.binds={};buildPhy();saveSet();renderPause()}
+    else if(v==='reset'){const b=SET.binds;SET=Object.assign({},SET_DEF,{binds:b});applySet();saveSet();renderPause()}else{ptab=v;renderPause()}return}
+  const g=e.target.closest('[data-g]');if(g){const k=g.dataset.g;if(k==='mute')muted=!muted;else SET[k]=!SET[k];sfx.ui();applySet();saveSet();renderPause();return}
+  const c=e.target.closest('[data-c]');if(c){SET[c.dataset.c]=c.dataset.v;sfx.ui();applySet();saveSet();renderPause();return}
+  const b=e.target.closest('[data-b]');if(b){rebindAct=rebindAct===b.dataset.b?null:b.dataset.b;sfx.ui();renderPause()}});
+$('pause').addEventListener('input',e=>{const s=e.target.dataset&&e.target.dataset.s;if(!s)return;SET[s]=+e.target.value;const el=$('sv_'+s);if(el)el.textContent=FMT[s](SET[s]);applySet();saveSet()});
+$('px').addEventListener('click',e=>{e.stopPropagation();sfx.ui();closePause();grabMouse()});
+let tachoOn=false,lastTacho=-1,fpsN=0,fpsT=0;
+function tachoTick(){const tc=!!(state==='play'&&player.car&&SET.tacho);if(tc!==tachoOn){tachoOn=tc;$('tacho').style.display=tc?'block':'none'}
+  if(tc){const v=Math.round(Math.abs(player.car.speed||0)*.5);if(v!==lastTacho){lastTacho=v;$('tacho').innerHTML=v+'<small>KM/H</small>'}}}
+function fpsTick(d){if(!SET.fps||!(d>0))return;fpsN++;fpsT+=d;if(fpsT>.5){$('fpsEl').textContent=Math.round(fpsN/fpsT)+' FPS';fpsN=0;fpsT=0}}
+applySet();
 
 addFixed();for(let i=0;i<PEDCAP;i++)spawnPed(0);for(let i=0;i<CARCAP;i++)spawnTraffic(0);
 requestAnimationFrame(frame);
