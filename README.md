@@ -7,7 +7,7 @@
 👉 **https://tillwassenhoven1-glitch.github.io/Neon-Bay/**
 
 Keine Installation, kein Konto nötig – läuft auf Handy, iPad und PC. 🎮
-*Version 0.4 · Open Beta*
+*Version 0.3.1 · Open Beta*
 
 ---
 
