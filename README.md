@@ -2,7 +2,7 @@
 
 **Ein Open-World-Actionspiel im Browser – Autos, Polizei, Missionen und eine riesige 3D-Stadt.**
 
-## ▶️ [Jetzt spielen](https://tillwassenhoven1-glitch.github.io/neon-bay/)
+## ▶️ [Jetzt spielen](https://tillwassenhoven1-glitch.github.io/Neon-Bay/)
 
 👉 **https://tillwassenhoven1-glitch.github.io/neon-bay/**
 
