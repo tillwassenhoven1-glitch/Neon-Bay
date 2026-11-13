@@ -322,7 +322,7 @@ body.ingarage #touch,body.ingarage #mmhit,body.ingarage #help,body.ingarage .pro
     <input id="cinput" class="cin" maxlength="4" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Code tippen…"><div class="kp2"><button id="cx">✕ Abbrechen</button><button id="cok">✔ OK</button></div><div id="cmsg"></div></div>
   <div id="clist" style="display:none"><h2>🎮 CHEAT-MENÜ</h2><div id="ctg"></div><button class="gbtn back" id="cclose" style="width:100%;margin-top:10px">Schließen</button></div>
 </div></div>
-<div id="start" class="overlay"><div id="ver" style="position:absolute;left:12px;bottom:10px;font:700 13px system-ui;color:rgba(255,255,255,.75);background:rgba(0,0,0,.35);padding:4px 10px;border-radius:8px">Version 0.3.5 · Open Beta</div>
+<div id="start" class="overlay"><div id="ver" style="position:absolute;left:12px;bottom:10px;font:700 13px system-ui;color:rgba(255,255,255,.75);background:rgba(0,0,0,.35);padding:4px 10px;border-radius:8px">Version 0.3.6 · Open Beta</div>
   <div class="box">
     <h1>NEON BAY</h1>
     <div class="sub">3D · OPEN WORLD · WANTED LEVEL</div>
@@ -2479,7 +2479,7 @@ const toggle=(id,label,val)=>'<div class="prow"><span>'+label+'</span><button cl
 const choice=(id,label,opts)=>'<div class="prow"><span>'+label+'</span><div class="chs">'+opts.map(o=>'<button class="ch'+(o===SET[id]?' on':'')+'" data-c="'+id+'" data-v="'+o+'">'+o+'</button>').join('')+'</div></div>';
 function renderPause(){document.querySelectorAll('#pause .ptabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===ptab));let h='';
   if(ptab==='main')h='<div class="pmain"><button class="btn" data-a="resume">▶ WEITERSPIELEN</button><div class="pquick"><button data-q="KeyP">📱 Handy</button><button data-q="KeyI">🎒 Inventar</button><button data-q="KeyM">🗺️ Karte</button><button data-q="KeyK">💻 Cheats</button></div><button class="pbtn" data-a="ctrl">🎮 Steuerung</button><button class="pbtn" data-a="gfx">🖥️ Grafik</button><button class="pbtn" data-a="snd">🔊 Ton</button><button class="pbtn" data-a="hud">📋 Anzeige</button>'+
-    '<button class="pbtn red" data-a="title">🏠 Zum Startbildschirm <small>(nicht Gespeichertes geht verloren)</small></button><div class="pver">Neon Bay 3D · Version 0.3.5 · Open Beta</div></div>';
+    '<button class="pbtn red" data-a="title">🏠 Zum Startbildschirm <small>(nicht Gespeichertes geht verloren)</small></button><div class="pver">Neon Bay 3D · Version 0.3.6 · Open Beta</div></div>';
   else if(ptab==='ctrl'){h=slider('sens','🖱️ Kamera-Empfindlichkeit',.3,2.5,.1)+toggle('invY','↕️ Kamera hoch/runter umdrehen',SET.invY)+toggle('autoCam','🎥 Kamera dreht automatisch mit',SET.autoCam)+(isTouch?slider('btn','👆 Größe der Touch-Buttons',.7,1.4,.05):'');
     h+='<div class="psec">⌨️ TASTENBELEGUNG – antippen und neue Taste drücken'+(isTouch?' (Tastatur nötig)':'')+'</div><div class="kgrid">'+ACTIONS.map(([a,n])=>'<button class="krow'+(rebindAct===a?' wait':'')+'" data-b="'+a+'"><span>'+n+'</span><kbd>'+(rebindAct===a?'Taste drücken…':keyName(SET.binds[a]||a))+'</kbd></button>').join('')+
       '</div><div class="pnote">Fest: Esc = Menü · 1–9 = Auswahl · Maus = Kamera'+(isTouch?' · Touch: links ziehen = laufen, rechts wischen = Kamera':'')+'</div><button class="pbtn" data-a="resetKeys">↩️ Tasten zurücksetzen</button>'}
@@ -2580,7 +2580,7 @@ if(0)for(const [id,txt,bg] of [['cloth','👕 KLEIDUNG','#ff6fd8'],['barber','�
   const gp=new THREE.Group();gp.position.set(m.x,0,m.y+6);scene.add(gp);box('#333',1.2,24,1.2,-15,12,0,gp);box('#333',1.2,24,1.2,15,12,0,gp);const sm=new THREE.Mesh(new THREE.PlaneGeometry(36,11),new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide}));sm.position.y=26;gp.add(sm)}
 
 // ================= NEUE STADT: LAUFZEIT =================
-var _cq=0;
+var _cq=0,_wb=null;function WBND(){if(_wb)return _wb;let a=-600,b=-600,c=WORLD+600,d=WORLD+600;for(const r of ROADS)for(const q of r.pts){a=Math.min(a,q.x-900);b=Math.min(b,q.y-900);c=Math.max(c,q.x+900);d=Math.max(d,q.y+900)}return _wb=[a,b,c,d]}
 function collide(o,r,nb,zH){let hit=null;_cq++;const gx=Math.floor(o.x/160),gy=Math.floor(o.y/160);
   for(let a=-1;a<=1;a++)for(let c2=-1;c2<=1;c2++){const L=BH[(gx+a)+','+(gy+c2)];if(!L)continue;for(const b of L){if(b._q===_cq)continue;b._q=_cq;if(zH&&b.H<=zH+2)continue;
     if(b.round){const dx=o.x-b.round.cx,dy=o.y-b.round.cz,d=hyp(dx,dy),rad=b.round.r+r;if(d<rad&&d>.01){o.x=b.round.cx+dx/d*rad;o.y=b.round.cz+dy/d*rad;hit={nx:dx/d,ny:dy/d}}continue}
@@ -2589,7 +2589,7 @@ function collide(o,r,nb,zH){let hit=null;_cq++;const gx=Math.floor(o.x/160),gy=M
     o.x=b.cx+u*b.ca-v*b.sa;o.y=b.cy+u*b.sa+v*b.ca;hit={nx:nu*b.ca-nv*b.sa,ny:nu*b.sa+nv*b.ca}}}
   if(o.x<-60||o.y<-60||o.x>WORLD+60||o.y>WORLD+60)for(const b of EXB){if(zH&&b.H<=zH+2)continue;const h=collideRect(o,r,b.x,b.y,b.w,b.h);if(h)hit=h}
   if(!nb&&zH==null&&!onExtra(o.x,o.y)){if(o.x<r){o.x=r;hit={nx:1,ny:0}}if(o.y<r){o.y=r;hit={nx:0,ny:1}}if(o.x>WORLD-r){o.x=WORLD-r;hit={nx:-1,ny:0}}if(o.y>WORLD-r){o.y=WORLD-r;hit={nx:0,ny:-1}}}
-  if(zH!=null){const L=1600;if(o.x<-L){o.x=-L;hit={nx:1,ny:0}}if(o.y<-L){o.y=-L;hit={nx:0,ny:1}}if(o.x>WORLD+L){o.x=WORLD+L;hit={nx:-1,ny:0}}if(o.y>WORLD+L){o.y=WORLD+L;hit={nx:0,ny:-1}}}
+  if(zH!=null){const W=WBND();if(o.x<W[0]){o.x=W[0];hit={nx:1,ny:0}}if(o.y<W[1]){o.y=W[1];hit={nx:0,ny:1}}if(o.x>W[2]){o.x=W[2];hit={nx:-1,ny:0}}if(o.y>W[3]){o.y=W[3];hit={nx:0,ny:-1}}}
   return hit}
 function inBuilding(x,y){const b=bAt(x,y,0);if(b)return b;if(!inCity(x,y))for(const q of EXB)if(x>q.x&&x<q.x+q.w&&y>q.y&&y<q.y+q.h)return q;return null}
 function perim(w,t){if(!w||!w.loop)return[w?w.x||0:0,w?w.y||0:0];const L=w.L,T=((t%(2*L))+2*L)%(2*L),s=T<=L?T:2*L-T,c=w.cum;let lo=0,hi=c.length-1;while(hi-lo>1){const m=(lo+hi)>>1;if(c[m]<=s)lo=m;else hi=m}
