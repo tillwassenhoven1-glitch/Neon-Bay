@@ -7,7 +7,7 @@
 👉 **https://tillwassenhoven1-glitch.github.io/Neon-Bay/**
 
 Keine Installation, kein Konto nötig – läuft auf Handy, iPad und PC. 🎮
-*Version 0.3.2 · Open Beta*
+*Version 0.3.3 · Open Beta*
 
 ---
 
@@ -21,11 +21,11 @@ Keine Installation, kein Konto nötig – läuft auf Handy, iPad und PC. 🎮
 
 ## Features
 
-- 🏙️ Große 3D-Welt: Innenstadt mit Hochhäusern, Land mit Feldern & Wald, **Berginsel mit Serpentinen** und **Sandland** mit Sandtown
-- 🛣️ **Autobahn A1** mit 3 Spuren, Verkehr der überholt, und **Stadtautobahn** auf Pfeilern quer durch die Stadt
-- 🚦 Ampeln & 🛑 Stoppschilder – der Verkehr hält an
-- 🛣️ Kurvige Landstraßen und abgerundete Straßenecken
-- 🌉 Schrägseilbrücke, ⤴️ Sprungschanzen und zerstörbare Zäune
+- 🏰 **Neue Stadt im Nördlingen-Stil:** runde Altstadt mit Stadtmauer, Tortürmen, Kirche & Marktplatz, Ringstraßen und Straßen wie Speichen
+- 🏙️ Drumherum Neon District mit Hochhäusern, Hafen, Parks mit Teich, Skatepark und Farmland – plus **Berginsel mit Serpentinen** und **Sandland** mit Sandtown
+- 🛣️ **Autobahn A1** mit 3 breiten Spuren und Verkehr, der überholt
+- 🚦 Ampeln & 🛑 Stoppschilder – KI-Autos halten an, blinken und fahren nicht ineinander
+- 🌉 Südbrücke (Schrägseilbrücke) zur A1, Brücke zur Berginsel, ⤴️ Sprungschanzen und zerstörbare Zäune
 - 🔧 Tuning-Werkstatt – Farbe, Motor, Turbo, Felgen & Reparatur
 - 🔫 Waffenladen & GTA-Waffenrad (Messer, Pistole, Schrotflinte, MP, Granaten)
 - 🎯 Missionen: 🚕 Taxi-Job, 🚒 Feuerwehr-Job, 🏦 Banküberfall, 🏁 Straßenrennen, 🏪 Ladenüberfälle
