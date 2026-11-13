@@ -7,7 +7,7 @@
 👉 **https://tillwassenhoven1-glitch.github.io/Neon-Bay/**
 
 Keine Installation, kein Konto nötig – läuft auf Handy, iPad und PC. 🎮
-*Version 0.3.4 · Open Beta*
+*Version 0.3.5 · Open Beta*
 
 ---
 
@@ -23,6 +23,8 @@ Keine Installation, kein Konto nötig – läuft auf Handy, iPad und PC. 🎮
 
 - 🏰 **Neue Stadt im Nördlingen-Stil:** runde Altstadt mit Stadtmauer, Tortürmen, Kirche & Marktplatz, Ringstraßen und Straßen wie Speichen
 - 🏙️ Drumherum Neon District mit Hochhäusern, Hafen, Parks mit Teich, Skatepark und Farmland – plus **Berginsel mit Serpentinen** und **Sandland** mit Sandtown
+- 🏠 Häuser mit echten 3D-Fenstern, Fensterläden und Haustüren – 🚁 Hubschrauber-Landeplätze auf den höchsten Wolkenkratzern
+- 🌊 Autos, die ins Wasser fallen, gehen unter – du schwimmst raus
 - 🛣️ **Autobahn A1** mit 3 breiten Spuren und Verkehr, der überholt
 - 🚦 Ampeln & 🛑 Stoppschilder – KI-Autos halten an, blinken und fahren nicht ineinander
 - 🌉 Südbrücke (Schrägseilbrücke) zur A1, Brücke zur Berginsel, ⤴️ Sprungschanzen und zerstörbare Zäune
