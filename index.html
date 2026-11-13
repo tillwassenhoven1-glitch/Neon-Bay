@@ -322,7 +322,7 @@ body.ingarage #touch,body.ingarage #mmhit,body.ingarage #help,body.ingarage .pro
     <input id="cinput" class="cin" maxlength="4" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Code tippen…"><div class="kp2"><button id="cx">✕ Abbrechen</button><button id="cok">✔ OK</button></div><div id="cmsg"></div></div>
   <div id="clist" style="display:none"><h2>🎮 CHEAT-MENÜ</h2><div id="ctg"></div><button class="gbtn back" id="cclose" style="width:100%;margin-top:10px">Schließen</button></div>
 </div></div>
-<div id="start" class="overlay"><div id="ver" style="position:absolute;left:12px;bottom:10px;font:700 13px system-ui;color:rgba(255,255,255,.75);background:rgba(0,0,0,.35);padding:4px 10px;border-radius:8px">Version 0.3.3 · Open Beta</div>
+<div id="start" class="overlay"><div id="ver" style="position:absolute;left:12px;bottom:10px;font:700 13px system-ui;color:rgba(255,255,255,.75);background:rgba(0,0,0,.35);padding:4px 10px;border-radius:8px">Version 0.3.4 · Open Beta</div>
   <div class="box">
     <h1>NEON BAY</h1>
     <div class="sub">3D · OPEN WORLD · WANTED LEVEL</div>
@@ -1412,7 +1412,7 @@ function updateCar(c,dt){
   if(c.ctrl==='player')physCar(c,player.inp.thr,player.inp.steer,player.inp.hb,dt);else if(c.ctrl==='cop')copDrive(c,dt);else if(c.ctrl==='race')raceDrive(c,dt);else physCar(c,0,0,false,dt);
   if(c.type==='boat'){boatBound(c);const sp=hyp(c.vx,c.vy);if(sp>50&&R()<dt*30){const bx=c.x-Math.cos(c.a)*c.spec.L*.5,by=c.y-Math.sin(c.a)*c.spec.L*.5;part({x:bx+rr(-6,6),y:by+rr(-6,6),z:-1,vx:rr(-20,20),vy:rr(-20,20),vz:rr(5,20),life:1,max:1,size:rr(2,3.5),grow:3,color:'#e8f6ff'})}return}
   carBuild(c);
-  if(!inCity(c.x,c.y)&&!((c.z||0)>2)){if(!onExtra(c.x,c.y)){c.x=c.px;c.y=c.py;c.vx*=-.25;c.vy*=-.25}
+  if(!inCity(c.x,c.y)&&!((c.z||0)>2)){if(!onExtra(c.x,c.y)){if(!waterCar(c,dt)){c.x=c.px;c.y=c.py;c.vx*=-.25;c.vy*=-.25}}
     else if(!c.air){const ca=Math.cos(c.a),sa=Math.sin(c.a),L2=c.spec.L/2,sl=(carGround(c,c.x+ca*L2,c.y+sa*L2)-carGround(c,c.x-ca*L2,c.y-sa*L2))/c.spec.L;c.vx-=ca*sl*300*dt;c.vy-=sa*sl*300*dt}}
   if(c.type!=='boat'&&!((c.z||0)>2)){const st=roadAt(c.x,c.y,0,'elev');
     if(c.elev){if(!st){if((c.elevH||0)>4&&Math.abs(groundH(c.x,c.y)-(c.elevH||0))>4){c.x=c.px;c.y=c.py;c.vx*=-.3;c.vy*=-.3}else c.elev=false}else c.elevH=st.h}
@@ -1500,7 +1500,7 @@ function landPoint(c){let best=null,bd=85;const cand=[{x:clamp(c.x,-64,WORLD+64)
   for(const p of cand){const d=hyp(p.x-c.x,p.y-c.y);if(d<bd&&walkable(p.x,p.y)){bd=d;best=p}}return best}
 function exitCar(force){const p=player,c=p.car;if(!c)return false;if(!force&&c.elev&&(c.elevH||0)>4){toast('🚫 Auf der Hochstraße kannst du nicht aussteigen');return false}let pos=doorPos(c);
   if(c.type==='boat'){pos=landPoint(c)||doorPos(c)}
-  const sp=hyp(c.vx,c.vy);p.car=null;p.x=pos.x;p.y=pos.y;p.z=c.z||0;p.vz=0;if(c.type!=='boat'){collide(p,8,true);if(!walkable(p.x,p.y)){p.x=clamp(p.x,-20,WORLD+20);p.y=clamp(p.y,-20,WORLD+20)}}
+  const sp=hyp(c.vx,c.vy);p.car=null;p.x=pos.x;p.y=pos.y;p.z=c.z||0;p.vz=0;if(c.type!=='boat'){collide(p,8,true);if(!walkable(p.x,p.y)&&!c.sink){p.x=clamp(p.x,-20,WORLD+20);p.y=clamp(p.y,-20,WORLD+20)}}
   p.vx=c.type==='boat'?0:c.vx*.6;p.vy=c.type==='boat'?0:c.vy*.6;p.a=c.a;c.ctrl='none';sfx.door();
   if(!force&&sp>170&&c.type!=='boat'){hurt(clamp(sp*.03,5,25));toast('🤸 Aus dem fahrenden Fahrzeug gesprungen!')}return true}
 function autoAim(a){let best=null,bs=1e9;for(const q of cops.concat(peds)){if(q.state==='ko')continue;const dx=q.x-player.x,dy=q.y-player.y,d=hyp(dx,dy);if(d>480||d<1)continue;
@@ -2432,7 +2432,7 @@ const toggle=(id,label,val)=>'<div class="prow"><span>'+label+'</span><button cl
 const choice=(id,label,opts)=>'<div class="prow"><span>'+label+'</span><div class="chs">'+opts.map(o=>'<button class="ch'+(o===SET[id]?' on':'')+'" data-c="'+id+'" data-v="'+o+'">'+o+'</button>').join('')+'</div></div>';
 function renderPause(){document.querySelectorAll('#pause .ptabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===ptab));let h='';
   if(ptab==='main')h='<div class="pmain"><button class="btn" data-a="resume">▶ WEITERSPIELEN</button><div class="pquick"><button data-q="KeyP">📱 Handy</button><button data-q="KeyI">🎒 Inventar</button><button data-q="KeyM">🗺️ Karte</button><button data-q="KeyK">💻 Cheats</button></div><button class="pbtn" data-a="ctrl">🎮 Steuerung</button><button class="pbtn" data-a="gfx">🖥️ Grafik</button><button class="pbtn" data-a="snd">🔊 Ton</button><button class="pbtn" data-a="hud">📋 Anzeige</button>'+
-    '<button class="pbtn red" data-a="title">🏠 Zum Startbildschirm <small>(nicht Gespeichertes geht verloren)</small></button><div class="pver">Neon Bay 3D · Version 0.3.3 · Open Beta</div></div>';
+    '<button class="pbtn red" data-a="title">🏠 Zum Startbildschirm <small>(nicht Gespeichertes geht verloren)</small></button><div class="pver">Neon Bay 3D · Version 0.3.4 · Open Beta</div></div>';
   else if(ptab==='ctrl'){h=slider('sens','🖱️ Kamera-Empfindlichkeit',.3,2.5,.1)+toggle('invY','↕️ Kamera hoch/runter umdrehen',SET.invY)+toggle('autoCam','🎥 Kamera dreht automatisch mit',SET.autoCam)+(isTouch?slider('btn','👆 Größe der Touch-Buttons',.7,1.4,.05):'');
     h+='<div class="psec">⌨️ TASTENBELEGUNG – antippen und neue Taste drücken'+(isTouch?' (Tastatur nötig)':'')+'</div><div class="kgrid">'+ACTIONS.map(([a,n])=>'<button class="krow'+(rebindAct===a?' wait':'')+'" data-b="'+a+'"><span>'+n+'</span><kbd>'+(rebindAct===a?'Taste drücken…':keyName(SET.binds[a]||a))+'</kbd></button>').join('')+
       '</div><div class="pnote">Fest: Esc = Menü · 1–9 = Auswahl · Maus = Kamera'+(isTouch?' · Touch: links ziehen = laufen, rechts wischen = Kamera':'')+'</div><button class="pbtn" data-a="resetKeys">↩️ Tasten zurücksetzen</button>'}
@@ -2541,16 +2541,25 @@ function collide(o,r,nb,zH){let hit=null;_cq++;const gx=Math.floor(o.x/160),gy=M
     let nu,nv;if(q<1e-6){const pu=b.hw-Math.abs(u),pv=b.hh-Math.abs(v);if(pu<pv){nu=Math.sign(u)||1;nv=0;u=nu*(b.hw+r)}else{nu=0;nv=Math.sign(v)||1;v=nv*(b.hh+r)}}else{const d=Math.sqrt(q);nu=du/d;nv=dv/d;u=cu+nu*r;v=cv+nv*r}
     o.x=b.cx+u*b.ca-v*b.sa;o.y=b.cy+u*b.sa+v*b.ca;hit={nx:nu*b.ca-nv*b.sa,ny:nu*b.sa+nv*b.ca}}}
   if(o.x<-60||o.y<-60||o.x>WORLD+60||o.y>WORLD+60)for(const b of EXB){if(zH&&b.H<=zH+2)continue;const h=collideRect(o,r,b.x,b.y,b.w,b.h);if(h)hit=h}
-  if(!nb&&!onExtra(o.x,o.y)){if(o.x<r){o.x=r;hit={nx:1,ny:0}}if(o.y<r){o.y=r;hit={nx:0,ny:1}}if(o.x>WORLD-r){o.x=WORLD-r;hit={nx:-1,ny:0}}if(o.y>WORLD-r){o.y=WORLD-r;hit={nx:0,ny:-1}}}
+  if(!nb&&zH==null&&!onExtra(o.x,o.y)){if(o.x<r){o.x=r;hit={nx:1,ny:0}}if(o.y<r){o.y=r;hit={nx:0,ny:1}}if(o.x>WORLD-r){o.x=WORLD-r;hit={nx:-1,ny:0}}if(o.y>WORLD-r){o.y=WORLD-r;hit={nx:0,ny:-1}}}
+  if(zH!=null){const L=1600;if(o.x<-L){o.x=-L;hit={nx:1,ny:0}}if(o.y<-L){o.y=-L;hit={nx:0,ny:1}}if(o.x>WORLD+L){o.x=WORLD+L;hit={nx:-1,ny:0}}if(o.y>WORLD+L){o.y=WORLD+L;hit={nx:0,ny:-1}}}
   return hit}
 function inBuilding(x,y){const b=bAt(x,y,0);if(b)return b;if(!inCity(x,y))for(const q of EXB)if(x>q.x&&x<q.x+q.w&&y>q.y&&y<q.y+q.h)return q;return null}
 function perim(w,t){if(!w||!w.loop)return[w?w.x||0:0,w?w.y||0:0];const L=w.L,T=((t%(2*L))+2*L)%(2*L),s=T<=L?T:2*L-T,c=w.cum;let lo=0,hi=c.length-1;while(hi-lo>1){const m=(lo+hi)>>1;if(c[m]<=s)lo=m;else hi=m}
   const u=(s-c[lo])/((c[hi]-c[lo])||1),A=w.pts[lo],Bq=w.pts[hi];return[lerp(A[0],Bq[0],u),lerp(A[1],Bq[1],u)]}
-function spawnPed(minD){const near=SWALK.filter(w=>Math.abs(w.cx-player.x)<1500&&Math.abs(w.cy-player.y)<1500);if(!near.length)return;
-  for(let k=0;k<14;k++){const w=near[ri(0,near.length-1)];if(!w.old&&R()<.35)continue;const t=rr(0,w.L),[x,y]=perim(w,t),d=hyp(x-player.x,y-player.y);if(d<minD||d>1300)continue;const p=makePed(x,y);p.blk=w;p.t=t;p.dirS=R()<.5?1:-1;peds.push(p);return}}
+function spawnPed(minD){const near=SWALK.filter(w=>Math.abs(w.cx-player.x)<1600&&Math.abs(w.cy-player.y)<1600&&w.L>20);if(!near.length)return;let tot=0;for(const w of near)tot+=w.L*(w.old?1.5:1);
+  for(let k=0;k<40;k++){let r=R()*tot,w=near[0];for(const q of near){r-=q.L*(q.old?1.5:1);if(r<=0){w=q;break}}const t=rr(0,w.L),[x,y]=perim(w,t),d=hyp(x-player.x,y-player.y);if(d<minD||d>1300)continue;
+    if(peds.some(o=>Math.abs(o.x-x)<45&&Math.abs(o.y-y)<45))continue;const p=makePed(x,y);p.blk=w;p.t=t;p.dirS=R()<.5?1:-1;peds.push(p);return}}
 function sidewalkPoint(minD,maxD){for(let k=0;k<80;k++){const w=SWALK[ri(0,SWALK.length-1)],[x,y]=perim(w,rr(0,w.L)),d=hyp(x-player.x,y-player.y);if(d>=minD&&d<=maxD)return{x,y}}const w=SWALK[ri(0,SWALK.length-1)],[x,y]=perim(w,rr(0,w.L));return{x,y}}
 function groundH(x,y){const rp=rampH(x,y);if(rp!=null)return rp;
   if(!inCity(x,y)){const rd=roadAt(x,y,0,null,12);if(rd)return rd.h;for(const q of PIERS)if(x>q.x&&x<q.x+q.w&&y>q.y&&y<q.y+q.h)return 3;const t=terrH(x,y);if(t>-.5)return t;return -.5}return 0}
+// ---- Autos im Wasser: sinken statt unsichtbarer Wand ----
+function waterCar(c,dt){if(c.type==='boat')return false;if(walkable(c.x,c.y)){c.sink=0;if(c.lift<0)c.lift=0;return true}
+  if(!c.sink){const pr=roadAt(c.px,c.py,0);if(pr&&pr.h>3&&!(c.z>2))return false}
+  if(!c.sink){c.sink=1e-3;for(let k=0;k<26;k++)part({x:c.x+rr(-14,14),y:c.y+rr(-14,14),z:0,vx:rr(-40,40),vy:rr(-40,40),vz:rr(30,90),g:180,life:.9,max:.9,size:rr(2,4),grow:2,color:'#dff4ff'});if(c===player.car){toast('🌊 Ab ins Wasser – das Auto sinkt!');sfx.crash()}}
+  c.sink+=dt;const k=Math.max(0,1-2.6*dt);c.vx*=k;c.vy*=k;c.lift=-Math.min(24,c.sink*7);c.siren=false;
+  if(c===player.car&&c.sink>.7){exitCar(true);player.swim=true}
+  if(c.sink>3.5)c.gone=true;return true}
 // ---- Ampeln & Vorfahrt ----
 const rankE=e=>e.cls==='ring'?3:e.cls==='coast'?2:e.cls==='outer'?(e.radial?1:2):e.cls==='street'?1:0;
 const resKey=c=>c.g.e.id+':'+c.g.fwd+':'+(c.g.e.lanes===2?c.g.lane:0);
