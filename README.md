@@ -28,6 +28,7 @@ Keine Installation, kein Konto nötig – läuft auf Handy, iPad und PC. 🎮
 - 🛣️ **Autobahn A1** mit 3 breiten Spuren und Verkehr, der überholt
 - 🚦 Ampeln & 🛑 Stoppschilder – KI-Autos halten an, blinken und fahren nicht ineinander
 - 🌉 Südbrücke (Schrägseilbrücke) zur A1, Brücke zur Berginsel, ⤴️ Sprungschanzen und zerstörbare Zäune
+- 🚲 **Fahrräder:** Fahrradverleih zum Leihen oder Kaufen (Citybike, Mountainbike, Rennrad), Fahrradständer in der Stadt und Radfahrer im Verkehr
 - 🔧 Tuning-Werkstatt – Farbe, Motor, Turbo, Felgen & Reparatur
 - 🔫 Waffenladen & GTA-Waffenrad (Messer, Pistole, Schrotflinte, MP, Granaten)
 - 🎯 Missionen: 🚕 Taxi-Job, 🚒 Feuerwehr-Job, 🏦 Banküberfall, 🏁 Straßenrennen, 🏪 Ladenüberfälle
