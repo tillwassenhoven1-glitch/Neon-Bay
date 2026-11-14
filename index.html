@@ -94,7 +94,7 @@ body.touch .app em,body.touch .phint{display:none}
 #pview.show{transform:none}
 #pview h3{margin:0 0 12px;display:flex;justify-content:space-between}
 #pview ul{list-style:none;padding:0;margin:0}
-#pview li{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+#pview li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.08)}#pview li>span{flex:1;min-width:0}#pview{overflow-y:auto}
 .back{cursor:pointer;opacity:.7;padding:0 6px}
 .phint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:11px;opacity:.8}
 .pbar{position:absolute;bottom:4px;left:50%;width:90px;height:4px;margin-left:-45px;background:rgba(255,255,255,.7);border-radius:3px}
@@ -300,14 +300,16 @@ body.ingarage #touch,body.ingarage #mmhit,body.ingarage #help,body.ingarage .pro
     <div id="pdate">Neon Bay · Dein Handy</div>
     <div id="apps">
       <div class="app" data-a="map"><div class="ic" style="background:#2b9348">🗺️</div><span>Karte</span><em>1</em></div>
-      <div class="app" data-a="car"><div class="ic" style="background:#e63946">🏎️</div><span>Auto $300</span><em>2</em></div>
+      <div class="app" data-a="car"><div class="ic" style="background:#e63946">🚚</div><span>Abschleppen</span><em>2</em></div>
       <div class="app" data-a="law"><div class="ic" style="background:#3a0ca3">⚖️</div><span>Anwalt $400</span><em>3</em></div>
       <div class="app" data-a="heal"><div class="ic" style="background:#f72585">❤️</div><span>Doc $150</span><em>4</em></div>
       <div class="app" data-a="stats"><div class="ic" style="background:#ff9f1c">📊</div><span>Statistik</span><em>5</em></div>
       <div class="app" data-a="time"><div class="ic" style="background:#4361ee">🌗</div><span>Zeit +6h</span><em>6</em></div>
       <div class="app" data-a="cheat"><div class="ic" style="background:#0b3d0b">💻</div><span>Cheats</span><em>7</em></div>
+      <div class="app" data-a="immo"><div class="ic" style="background:#8338ec">🏠</div><span>Immobilien</span><em>8</em></div>
+      <div class="app" data-a="dealer"><div class="ic" style="background:#ffb703">🚘</div><span>Autohaus</span><em>9</em></div>
     </div>
-    <div class="phint">P = schließen · Tasten 1–6</div>
+    <div class="phint">P = schließen · Tasten 1–9</div>
     <div id="pview"></div>
     <div class="pbar"></div>
   </div>
@@ -557,6 +559,13 @@ for(const col of blocks)for(const b of col){if(!b.rural)continue;const near=(x,y
   b.trees=b.trees.filter(t=>!near(t.x,t.y,t.r+8));b.bld=b.bld.filter(q=>![[q.x,q.y],[q.x+q.w,q.y],[q.x,q.y+q.h],[q.x+q.w,q.y+q.h],[q.x+q.w/2,q.y+q.h/2]].some(([x,y])=>near(x,y,12)));
   if(b.silo&&near(b.silo.x,b.silo.y,20))b.silo=null}
 const DIRT=addRoad('dirt',profile(resample(catmull([[2620,SCY+150],[2600,SCY+330],[2700,SCY+520],[TOWN.x,TOWN.y-60]],false,12),11,false),false,{deck:8,min:3,smooth:8,grade:.12}),20,false,'dirt');
+const DIRT2=addRoad('dirt',profile(resample(catmull([[4600,5360],[4612,5560],[4590,5760],[4600,5960],[4600,6460]],false,12),11,false),false,{deck:8,min:3,smooth:8,grade:.12}),20,false,'dirt');
+const GW_=42,GD_=56;const DHOMES_DEF=(function(){const L=[];let n=0;for(const [sd,ys] of [[-1,[5880,5995,6110,6225,6340]],[1,[5920,6035,6150,6265,6380]]])for(const y of ys){const W=56+((n*7)%3)*8,D=44+((n*5)%3)*6,hh=D/2,hw=W/2,cx=4600+sd*(20+14+hh);
+  let q=DIRT2.pts[0];for(const p of DIRT2.pts)if(Math.abs(p.y-y)<Math.abs(q.y-y))q=p;
+  L.push({cx,cy:y,hw,hh,a:Math.atan2(sd,0),fx:-sd,fy:0,sale:[0,2,3,5,7,9].includes(n),gar:[2,5,9].includes(n),gs:(n%2?1:-1),n,base:q.h-.6});n++}return L})();
+const DHRECTS=DHOMES_DEF.map(h=>{const ca=Math.cos(h.a),sa=Math.sin(h.a),pts=[];const add=(lx,ly)=>pts.push([h.cx+lx*ca-ly*sa,h.cy+lx*sa+ly*ca]);for(const [u,v] of [[1,1],[1,-1],[-1,1],[-1,-1]])add(u*h.hw,v*h.hh);
+  if(h.gar){const glx=h.gs*(h.hw+5+GW_/2);for(const [u,v] of [[1,0],[-1,0],[1,1],[-1,1]])add(glx+u*GW_/2,u?(v?h.hh:h.hh-GD_):h.hh)}
+  const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);return{x0:Math.min(...xs),x1:Math.max(...xs),y0:Math.min(...ys),y1:Math.max(...ys),h:h.base}});
 // ---- terrain grids ----
 function mkGrid(L,pad,st,raw){const G={x0:L.cx-L.rx-pad,y0:L.cy-L.ry-pad,st};G.nx=Math.ceil((2*L.rx+2*pad)/st)+1;G.ny=Math.ceil((2*L.ry+2*pad)/st)+1;G.h=new Float32Array(G.nx*G.ny);
   for(let j=0;j<G.ny;j++)for(let i=0;i<G.nx;i++){const x=G.x0+i*st,y=G.y0+j*st;let h=raw(x,y);
@@ -568,6 +577,7 @@ function mkGridB(st){const G={x0:LBX[0],y0:LBX[1],st};G.nx=Math.ceil((LBX[2]-LBX
   for(let j=0;j<G.ny;j++)for(let i=0;i<G.nx;i++){const x=G.x0+i*st,y=G.y0+j*st;let h;
     if(inCity(x,y)){const din=Math.min(x,y,WORLD-x,WORLD-y);h=-.4-Math.min(3,din/15)}else{h=terrRaw(x,y);
       if(h>-15){const dv=Math.hypot(x-VIEWP.x,y-VIEWP.y),de=Math.hypot(x-VIEWP.ex,y-VIEWP.ey);if(dv<VIEWP.r+4||de<40)h=VIEWP.h;else if(dv<VIEWP.r+70&&h>VIEWP.h){const w=1-(dv-VIEWP.r-4)/66;h=lerp(h,VIEWP.h,w*w*(3-2*w))}
+        for(const r of DHRECTS){if(x<r.x0-40||x>r.x1+40||y<r.y0-40||y>r.y1+40)continue;const dd=Math.max(r.x0-x,x-r.x1,r.y0-y,y-r.y1,0);if(dd<6){h=r.h;break}const w=1-(dd-6)/34;h=lerp(h,r.h,w*w*(3-2*w))}
         const rd=roadAt(x,y,100);let core=false;if(rd){const t=rd.h-.6,hw=rd.r.hw;if(rd.d<hw+8){h=t;core=true}else if(h<t){const w=1-(rd.d-hw-8)/37;if(w>0)h=lerp(h,t,w*w*(3-2*w))}else if(rd.d<hw+46)h=t;else{const w=1-(rd.d-hw-46)/55;if(w>0)h=lerp(h,t,w*w*(3-2*w))}}
         if(!core){const m=roadCut(x,y);if(m!=null&&h>m)h=m}}}G.h[j*G.nx+i]=h}return G}
 const TG=mkGridB(16),TGI=TG,TGS=TG;
@@ -592,7 +602,7 @@ exb(GAS.x-30,GAS.y+22,60,34,38,'#e8e2d0','shop');
 exb(TOWN.x-30,TOWN.y-20,70,45,40,'#d94f4f','diner');exb(TOWN.x+80,TOWN.y-40,120,40,42,'#e0b872','motel');
 for(const [dx,dy] of [[-120,90],[-60,150],[40,140],[120,90],[170,180],[-150,-80],[200,-110]])exb(TOWN.x+dx-28,TOWN.y+dy-22,56,44,38,pick(['#f4e3c1','#c9b18a','#a8c3d6','#e6c9a8','#d8d0c0']),'house');
 const SANDT=[];for(let k=0;k<9000&&SANDT.length<280;k++){const x=TGS.x0+sr()*(TGS.nx-1)*TGS.st,y=TGS.y0+sr()*(TGS.ny-1)*TGS.st,h=terrH(x,y);if(h<4||!isDesert(x,y)||shoreD(x,y)<260)continue;if(roadAt(x,y,40)||rampH(x,y)!=null)continue;
-  if(EXB.some(b=>x>b.x-40&&x<b.x+b.w+40&&y>b.y-40&&y<b.y+b.h+40)||hyp(x-GAS.x,y-GAS.y)<120)continue;SANDT.push({x,y,gy:h,k:sr()})}
+  if(EXB.some(b=>x>b.x-40&&x<b.x+b.w+40&&y>b.y-40&&y<b.y+b.h+40)||hyp(x-GAS.x,y-GAS.y)<120||DHRECTS.some(r=>x>r.x0-34&&x<r.x1+34&&y>r.y0-34&&y<r.y1+34))continue;SANDT.push({x,y,gy:h,k:sr()})}
 const ISLTREES=[];for(let k=0;k<12000&&ISLTREES.length<520;k++){const x=TGI.x0+sr()*(TGI.nx-1)*TGI.st,y=TGI.y0+sr()*(TGI.ny-1)*TGI.st,h=terrH(x,y);if(h<3||h>270||isDesert(x,y)||shoreD(x,y)<220||cityD(x,y)<120||(h<20&&sr()<.55))continue;if(roadAt(x,y,22))continue;
   ISLTREES.push({x,y,r:11+sr()*9,c:spick(h>170?['#2a4f2a','#355e32']:['#2f6b2a','#3a7d32','#2b5e26']),gy:h})}
 for(const t of SANDT)if(t.k<.35)ISLTREES.push({x:t.x,y:t.y,r:7+t.k*12,c:spick(['#7d7a3e','#8a8448','#6f6b35']),gy:t.gy});
@@ -727,11 +737,11 @@ function coastHit(t){const dx=Math.cos(t),dy=Math.sin(t);let best=0,bd=1e9;coast
 // externe Straßen (Brücken/Autobahn) fürs GPS
 {const ext=(r,a,b,P)=>eAdd(a,b,P,'ext',{ext:true,noAI:true,road:r});
   const rdEnd=nAdd(RD.pts[RD.pts.length-1]);ext(RD,FIXPOS.bridgeE,rdEnd,RD.pts);
-  const n=HW.pts.length;let iD=0,bd=1e9;HW.pts.forEach((q,i)=>{const d=hyp(q.x-DIRT.pts[0].x,q.y-DIRT.pts[0].y);if(d<bd){bd=d;iD=i}});
-  const idx=[...new Set([0,iD,Math.floor(n/3),Math.floor(2*n/3)])].sort((a,b)=>a-b),HN={};idx.forEach(i=>HN[i]=nAdd(HW.pts[i]));
+  const n=HW.pts.length;let iD=0,bd=1e9;HW.pts.forEach((q,i)=>{const d=hyp(q.x-DIRT.pts[0].x,q.y-DIRT.pts[0].y);if(d<bd){bd=d;iD=i}});let iD2=0;bd=1e9;HW.pts.forEach((q,i)=>{const d=hyp(q.x-DIRT2.pts[0].x,q.y-DIRT2.pts[0].y);if(d<bd){bd=d;iD2=i}});
+  const idx=[...new Set([0,iD,iD2,Math.floor(n/3),Math.floor(2*n/3)])].sort((a,b)=>a-b),HN={};idx.forEach(i=>HN[i]=nAdd(HW.pts[i]));
   ext(SB,FIXPOS.bridgeS,HN[0],SB.pts);
   for(let j=0;j<idx.length;j++){const i0=idx[j],i1=idx[(j+1)%idx.length];const P=i1>i0?HW.pts.slice(i0,i1+1):HW.pts.slice(i0).concat(HW.pts.slice(0,i1+1));ext(HW,HN[i0],HN[i1],P)}
-  const tEnd=nAdd(DIRT.pts[DIRT.pts.length-1]);ext(DIRT,HN[iD],tEnd,[HW.pts[iD]].concat(DIRT.pts))}
+  const tEnd=nAdd(DIRT.pts[DIRT.pts.length-1]);ext(DIRT,HN[iD],tEnd,[HW.pts[iD]].concat(DIRT.pts));const tEnd2=nAdd(DIRT2.pts[DIRT2.pts.length-1]);ext(DIRT2,HN[iD2],tEnd2,[HW.pts[iD2]].concat(DIRT2.pts))}
 for(const n of NET.nodes){n.rad=Math.max(0,...n.edges.filter(e=>!e.ext).map(e=>e.hw))+6;n.deg=n.edges.length}
 function netNear(x,y,R,ext){R=R||200;let best=null,bd=R;if(ext)for(const e of NET.edges){if(!e.ext)continue;for(let i=0;i<e.pts.length;i++){const q=e.pts[i],d=hyp(q.x-x,q.y-y);if(d<bd){bd=d;best={e,i,d,s:e.cum[i]}}}}R=Math.min(R,bd+1);const gx=Math.floor(x/100),gy=Math.floor(y/100),rr2=Math.ceil(R/100);
   for(let a=-rr2;a<=rr2;a++)for(let b=-rr2;b<=rr2;b++){const L=NGRID[(gx+a)+','+(gy+b)];if(!L)continue;for(let k=0;k<L.length;k+=2){const e=NET.edges[L[k]],q=e.pts[L[k+1]],d=hyp(q.x-x,q.y-y);if(d<bd){bd=d;best={e,i:L[k+1],d,s:e.cum[L[k+1]]}}}}return best}
@@ -849,6 +859,35 @@ const DLAB=[['Altstadt',640,4.35],['Stadtgraben',1140,2.05],['Neon District',195
 function districtAt(x,y){if(!NETOK)return'';if(!inCity(x,y))return x>WORLD?'Berginsel':y>WORLD?'Sandland':'Küste';const z=zoneOf(x,y);
   return {markt:'Marktplatz',old:'Altstadt',green:'Stadtgraben',neon:'Neon District',harbor:'Gewerbegebiet',west:'Weststadt',farm:'Farmland'}[z]||(y<CY?'Nordstadt':'Südstadt')}
 NETOK=true;{const st=MARKERS.filter(m=>m.id.startsWith('store'));st.forEach(m=>m.label='24/7-Laden '+districtAt(m.x,m.y));st.forEach(m=>{if(st.filter(o=>o.label===m.label).length>1)m._dup=true});st.forEach(m=>{if(m._dup)m.label+=m.x<CX?' West':' Ost'})}
+// ===== IMMOBILIEN: kaufbare Häuser, Garagen, Autohaus =====
+const HOMES=[],GW=42,GD=56;
+function homeWorld(h,lx,ly){return{x:h.cx+lx*h.ca-ly*h.sa,y:h.cy+lx*h.sa+ly*h.ca}}
+function homeLocal(h,x,y){const dx=x-h.cx,dy=y-h.cy;return{lx:dx*h.ca+dy*h.sa,ly:-dx*h.sa+dy*h.ca}}
+function homeGarageWalls(h){const lx=h.glx,yb=h.hh-GD;return[{lx,ly:yb+1.5,hw:GW/2,hh:1.5},{lx:lx-(GW/2-1.5),ly:yb+GD/2,hw:1.5,hh:GD/2},{lx:lx+(GW/2-1.5),ly:yb+GD/2,hw:1.5,hh:GD/2}]}
+function homeFinish(h){h.ca=Math.cos(h.a);h.sa=Math.sin(h.a);const fx=-h.sa,fy=h.ca;h.fx=fx;h.fy=fy;const po=h.desert?22:30;
+  h.door={x:h.cx+fx*(h.hh+9),y:h.cy+fy*(h.hh+9)};h.park={x:h.cx+fx*(h.hh+po),y:h.cy+fy*(h.hh+po),a:Math.atan2(-fx,fy)};
+  if(h.gar){h.glx=h.gs*(h.hw+5+GW/2);const gp=homeWorld(h,h.glx,h.hh-GD/2+2);h.gpark={x:gp.x,y:gp.y,a:Math.atan2(fy,fx)};const gf=homeWorld(h,h.glx,h.hh);h.gfront=gf;
+    for(const w of homeGarageWalls(h)){const p=homeWorld(h,w.lx,w.ly);bAdd({cx:p.x,cy:p.y,hw:w.hw,hh:w.hh,a:h.a,H:30,col:'#8d8d8d',kind:'gwall',plain:true,base:h.base||0})}
+    const gc=homeWorld(h,h.glx,h.hh-GD/2);for(let i=CTREES.length-1;i>=0;i--){const t=CTREES[i];if(hyp(t.x-gc.x,t.y-gc.y)<GD/2+t.r+4)CTREES.splice(i,1)}
+    for(let i=CLAMPS.length-1;i>=0;i--){const l=CLAMPS[i];if(hyp(l[0]-gc.x,l[1]-gc.y)<GD/2+8)CLAMPS.splice(i,1)}}
+  h.price=Math.round(h.price/500)*500;HOMES.push(h);return h}
+{const STREETS={markt:'Marktgasse',old:'Kirchgasse',west:'Lindenweg',sub:'Sonnenweg'},BASE={markt:98000,old:72000,west:36000,sub:28000},COUNT={markt:3,old:6,west:7,sub:8};
+  const cand=BLD.filter(b=>b.kind==='house'&&!b.round&&b.face),zs={markt:[],old:[],west:[],sub:[]};for(const b of cand){const z=zoneOf(b.cx,b.cy);if(zs[z])zs[z].push(b)}
+  let id=1;for(const z of ['markt','old','west','sub']){const arr=zs[z],n=COUNT[z];if(!arr.length)continue;const st=Math.max(1,Math.floor(arr.length/n));let num=1;
+    for(let i=Math.floor(st/2);i<arr.length&&num<=n;i+=st){const b=arr[i];if(b.homeId)continue;const h={id:id++,bld:b,cx:b.cx,cy:b.cy,hw:b.hw,hh:b.hh,a:b.a,zone:z,desert:false,base:0,owned:false,gar:false,gs:1};
+      let gar=false;if(z==='west'||z==='sub'){for(const gs of [1,-1]){const ca=Math.cos(b.a),sa=Math.sin(b.a),lx=gs*(b.hw+5+GW/2),ly=b.hh-GD/2,gx=b.cx+lx*ca-ly*sa,gy=b.cy+lx*sa+ly*ca;
+          if(canPlace(gx,gy,GW/2+1,GD/2+1,b.a,{rm:2,m:3})){gar=true;h.gs=gs;break}}}
+      h.gar=gar;const sf=clamp((b.hw*b.hh)/(34*27),.75,1.45);h.price=BASE[z]*sf*(gar?1.25:1);h.name=STREETS[z]+' '+(num*2+1);h.district=districtAt(b.cx,b.cy);b.homeId=h.id;homeFinish(h);num++}}
+  // Dünendorf (Wüste): günstige Häuser, einige nicht zu verkaufen
+  let dn=1,xn=1;for(const d of DHOMES_DEF){const H=34+((d.n*3)%2)*6,col=['#f4e3c1','#c9b18a','#a8c3d6','#e6c9a8','#d8d0c0','#e0a899','#efe2c8'][d.n%7];
+    const b=bAdd({cx:d.cx,cy:d.cy,hw:d.hw,hh:d.hh,a:d.a,H,col,kind:'house',ht:H/230,face:{nx:d.fx,ny:d.fy},base:d.base,plain:false});
+    const h={id:id++,bld:b,cx:d.cx,cy:d.cy,hw:d.hw,hh:d.hh,a:d.a,zone:'desert',desert:true,base:d.base,owned:false,gar:d.gar,gs:d.gs,nosale:!d.sale,district:'Dünendorf',n:d.n};
+    const sf=clamp((d.hw*d.hh)/(30*25),.8,1.3);h.price=6500*sf*(d.gar?1.3:1);h.name=d.sale?'Kaktusweg '+(dn++*2):'Kaktusweg '+(xn++*2+1);b.homeId=h.id;homeFinish(h)}}
+// Autohaus
+placeSpecial('dealer','R2',1,.5,'out',132,76,46,'#dfe7f0',{sign:'AUTOHAUS',signCol:'#ffd23f',park2:true});
+{const m=mkM('dealer',0,0,'🚘','#ffb703','Autohaus',26);MARKERS.push(m);MK.dealer=m;const sp=SPEC.dealer,b=sp.b;m.x=sp.mk.x;m.y=sp.mk.y;const R2=Math.max(b.hw,b.hh)+40;for(let i=CTREES.length-1;i>=0;i--){const t=CTREES[i];if(hyp(t.x-b.cx,t.y-b.cy)<R2||hyp(t.x-sp.park.x,t.y-sp.park.y)<30||hyp(t.x-sp.park2.x,t.y-sp.park2.y)<36)CTREES.splice(i,1)}}
+const DEALER=[['sedan','Limousine',4500,'solide, 4 Türen'],['van','Van',6500,'robust, viel Platz'],['bike','Motorrad',6000,'schnell & wendig'],['sports','Sportwagen',18000,'das schnellste Auto der Stadt']];
+
 blocks.length=0;
 
 const RCN=30;
@@ -1103,8 +1142,35 @@ function buildHelipads(){const pads=BLD.filter(b=>b.pad);if(!pads.length)return;
   for(const b of pads){const s=Math.min(b.hw,b.hh)*1.75,gm=new THREE.PlaneGeometry(s,s);gm.rotateX(-Math.PI/2);const m=new THREE.Mesh(gm,pm);m.position.set(b.cx,b.H+.3,b.cy);m.rotation.y=-b.a;m.receiveShadow=true;scene.add(m);
     for(const [u,v] of [[1,1],[1,-1],[-1,1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]]){const lu=u*s*.5,lv=v*s*.5;lt.push([b.cx+lu*b.ca-lv*b.sa,b.H+1.2,b.cy+lu*b.sa+lv*b.ca])}}
   const im=new THREE.InstancedMesh(new THREE.SphereGeometry(1.3,8,6),new THREE.MeshBasicMaterial({color:0xff3b3b}),lt.length);lt.forEach((p,i)=>{d3.position.set(p[0],p[1],p[2]);d3.updateMatrix();im.setMatrixAt(i,d3.matrix)});scene.add(im)}
-function xfGB(src,dst,cx,cz,a){const ca=Math.cos(a),sa=Math.sin(a),P=src.p,Nn=src.n;for(let i=0;i<P.length;i+=3){const x=P[i],y=P[i+1],z=P[i+2];dst.p.push(cx+x*ca-z*sa,y,cz+x*sa+z*ca);const nx=Nn[i],ny=Nn[i+1],nz=Nn[i+2];dst.n.push(nx*ca-nz*sa,ny,nx*sa+nz*ca)}
+function xfGB(src,dst,cx,cz,a,dy){dy=dy||0;const ca=Math.cos(a),sa=Math.sin(a),P=src.p,Nn=src.n;for(let i=0;i<P.length;i+=3){const x=P[i],y=P[i+1],z=P[i+2];dst.p.push(cx+x*ca-z*sa,y+dy,cz+x*sa+z*ca);const nx=Nn[i],ny=Nn[i+1],nz=Nn[i+2];dst.n.push(nx*ca-nz*sa,ny,nx*sa+nz*ca)}
   for(const u of src.u)dst.u.push(u);for(const c of src.c)dst.c.push(c)}
+
+// ===== 3D: Garagen, Verkaufsschilder, Dünendorf-Deko, Autohaus-Ausstellung =====
+function buildHomes3D(){
+  const doorTex=canvasTex(128,128,g=>{g.fillStyle='#cfd3d8';g.fillRect(0,0,128,128);g.fillStyle='rgba(0,0,0,.18)';for(let y=14;y<128;y+=16)g.fillRect(0,y,128,3);g.fillStyle='rgba(255,255,255,.25)';for(let y=10;y<128;y+=16)g.fillRect(0,y,128,2);g.fillStyle='#2a2d31';g.fillRect(54,60,20,6)});
+  const saleTex=(txt,price)=>canvasTex(256,128,g=>{g.fillStyle='#fff6d6';g.fillRect(0,0,256,128);g.strokeStyle='#b8860b';g.lineWidth=8;g.strokeRect(4,4,248,120);g.fillStyle='#b3001b';g.font='900 36px system-ui';g.textAlign='center';g.fillText(txt,128,52);g.fillStyle='#1b1b1b';g.font='800 30px system-ui';g.fillText(price,128,98)},true);
+  for(const h of HOMES){const g=new THREE.Group();g.position.set(h.cx,h.base||0,h.cy);g.rotation.y=-h.a;scene.add(g);h.g3=g;
+    if(h.gar){const c=col3(h.bld.col),wc='#'+new THREE.Color(c.r*.92,c.g*.92,c.b*.92).getHexString(),lx=h.glx,yb=h.hh-GD,GH=29;
+      box(wc,GW,GH,3,lx,GH/2,yb+1.5,g).castShadow=true;for(const s of [-1,1])box(wc,3,GH,GD,lx+s*(GW/2-1.5),GH/2,yb+GD/2,g).castShadow=true;
+      box('#4a4d52',GW+4,2.2,GD+4,lx,GH+1.1,yb+GD/2,g);box('#5a5d62',GW+5,1,3,lx,GH+1.4,h.hh+.6,g);
+      box('#6f737a',GW-6,.4,GD-4,lx,.2,yb+GD/2+1,g);box('#8a8d92',GW-2,.3,22,lx,.25,h.hh+11,g);
+      const dr=new THREE.Mesh(new THREE.PlaneGeometry(GW-6,GH-3),new THREE.MeshLambertMaterial({map:doorTex,side:THREE.DoubleSide}));dr.position.set(lx,(GH-3)/2,h.hh-1);g.add(dr);h.doorMesh=dr;h.doorY=(GH-3)/2;h.doorOpen=0;
+      box('#2a2d31',GW-4,1.2,1.2,lx,GH-1.2,h.hh-1,g);const lamp=box('#ffe9a8',3,1.6,1.6,lx,GH-3.5,h.hh+.9,g);lamp.material=new THREE.MeshBasicMaterial({color:'#ffe9a8'})}
+    if(!h.nosale){const sg=new THREE.Group();sg.position.set(12.5,0,h.hh+3.2);g.add(sg);box('#6b4a2e',1.2,8,1.2,0,4,0,sg);
+      const pl=new THREE.Mesh(new THREE.PlaneGeometry(11,5.5),new THREE.MeshLambertMaterial({map:saleTex('ZU VERKAUFEN','$'+h.price.toLocaleString('de-DE')),side:THREE.DoubleSide}));pl.position.set(0,5.4,.7);sg.add(pl);h.sign=sg;sg.visible=!h.owned}
+    if(h.desert){for(const s of [-1,1]){const px=s*(h.hw+6);if(h.gar&&Math.sign(px)===Math.sign(h.glx))continue;for(let k=0;k<4;k++)box('#c9b79a',1,5,1,px,2.5,h.hh-8-k*9,g);box('#c9b79a',.6,.6,30,px,4.2,h.hh-21,g)}
+      if((h.n||0)%3===0&&h.desert){const bx=new THREE.Mesh(new THREE.CylinderGeometry(2.6,2.6,6,10),mat('#9a9ea3'));bx.position.set(-h.hw*.55,10,h.hh+2.5);g.add(bx);box('#6b4a2e',1,8,1,-h.hw*.55,4,h.hh+2.5,g)}}}
+  // Ortsschild + Deko Dünendorf
+  {const d0=DHOMES_DEF[0],x=4600-34,y=5790,gh=groundH(x,y),t=canvasTex(256,128,g=>{g.fillStyle='#f6e7b4';g.fillRect(0,0,256,128);g.strokeStyle='#222';g.lineWidth=8;g.strokeRect(4,4,248,120);g.fillStyle='#222';g.font='900 46px system-ui';g.textAlign='center';g.fillText('DÜNENDORF',128,62);g.font='700 22px system-ui';g.fillText('günstig wohnen in der Wüste',128,100)},true);
+    const gp=new THREE.Group();gp.position.set(x,gh,y);scene.add(gp);box('#777',1.4,22,1.4,0,11,0,gp);const pl=new THREE.Mesh(new THREE.PlaneGeometry(24,12),new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide}));pl.position.set(0,24,0);pl.rotation.y=-Math.PI/2;gp.add(pl)}
+  // Autohaus: Ausstellungswagen auf dem Hof
+  try{const sp=SPEC.dealer;if(sp&&sp.park2){const c=makeCar('sports',sp.park2.x,sp.park2.y,(sp.park2.a||0)+.35);c.color='#ffd23f';c.fixed=true;c.display=true;c.ctrl='none';cars.push(c);
+    const pd=new THREE.Mesh(new THREE.CylinderGeometry(34,36,1.4,28),mat('#dfe7f0'));pd.position.set(sp.park2.x,.7,sp.park2.y);scene.add(pd)}}catch(e){}}
+function homesFrame(rdt){const p=player;for(const h of HOMES){if(!h.doorMesh)continue;const gf=h.gfront;if(Math.abs(gf.x-cam.x)>700||Math.abs(gf.y-cam.y)>700)continue;let open=false;
+    if(h.owned){const near=(x,y)=>{const {lx,ly}=homeLocal(h,x,y);return Math.abs(lx-h.glx)<34&&ly>h.hh-GD&&ly<h.hh+110};
+      if(near(p.x,p.y))open=true;else for(const r of OWNED){if(r.car&&!r.car.wrecked&&near(r.car.x,r.car.y)){open=true;break}}}
+    h.doorOpen=lerp(h.doorOpen,open?1:0,Math.min(1,rdt*2.2));h.doorMesh.position.y=h.doorY+h.doorOpen*23;h.doorMesh.scale.y=1-h.doorOpen*.92;h.doorMesh.position.z=h.hh-1-h.doorOpen*3}}
+
 function buildCity3D(){const addM=(g,m,rs,cs)=>{if(!g.p.length)return null;const me=new THREE.Mesh(gbGeo(g),m);me.receiveShadow=!!rs;me.castShadow=!!cs;scene.add(me);return me};
   const fan=(g,pts,y,us)=>{let cx=0,cz=0;for(const p of pts){cx+=p[0];cz+=p[1]}cx/=pts.length;cz/=pts.length;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];
       for(const [P,Q] of [[a,b],[b,a]])gbQuad(g,[cx,y,cz],[P[0],y,P[1]],[Q[0],y,Q[1]],[Q[0],y,Q[1]],[[cx/us,cz/us],[P[0]/us,P[1]/us],[Q[0]/us,Q[1]/us],[Q[0]/us,Q[1]/us]],null,[0,1,0])}};
@@ -1137,7 +1203,7 @@ function buildCity3D(){const addM=(g,m,rs,cs)=>{if(!g.p.length)return null;const
   // Gebäude
   const gB2=GB(),gS2=GB(),gR2=GB(),gStone=GB();
   for(const b of BLD){const t=GB(),ts=GB(),tr=GB(),c=col3(b.col),cc=[c.r,c.g,c.b],rc=[c.r*.78,c.g*.78,c.b*.78],lc=[c.r*.84,c.g*.84,c.b*.84],pc=[c.r*.68,c.g*.68,c.b*.68],dk=[.16,.17,.19],w=b.hw,h=b.hh,H=b.H;
-    if(b.round)continue;
+    if(b.round||b.kind==='gwall')continue;
     if(b.kind==='wall'){wallsBox(t,-w,-h,w,h,0,H,cc);roofQ(t,-w,-h,w,h,H,pc);for(let x=-w+2;x<w-2;x+=7)boxG(t,x,H,-h,x+3.5,H+4,h,cc);xfGB(t,gStone,b.cx,b.cy,b.a);continue}
     if(b.kind==='house'||b.kind==='barn'||(b.kind==='special'&&b.house)||b.kind==='church'){const steep=b.kind==='church'?1.1:.75,rh=H+h*steep*1.4,o=4,yr=H+(rh-H)*o/(h+o),tw=GB(),church=b.kind==='church',barn=b.kind==='barn';
       wallsPlain(t,-w,-h,w,h,0,H,cc);
@@ -1159,7 +1225,7 @@ function buildCity3D(){const addM=(g,m,rs,cs)=>{if(!g.p.length)return null;const
         const dc=church?[.3,.2,.13]:pick(DOORC),fh=church?36:23;gbQuad(tw,[-dH+1,0,h+.12],[dH-1,0,h+.12],[dH-1,fh,h+.12],[-dH+1,fh,h+.12],UVW,dc,[0,0,1]);
         boxF(tw,-dH,0,h,-dH+1,fh+1,h+1.4,fr);boxF(tw,dH-1,0,h,dH,fh+1,h+1.4,fr);boxF(tw,-dH,fh,h,dH,fh+1,h+1.4,fr);boxF(tw,dH-3.2,fh*.45,h+.1,dH-2.2,fh*.45+1,h+.9,[.85,.75,.3]);
         boxF(tw,-dH-2,0,h,dH+2,1.3,h+3.4,[.6,.6,.62]);if(!church)boxF(tw,-dH-2.5,fh+3,h,dH+2.5,fh+3.8,h+4.5,[c.r*.5,c.g*.5,c.b*.5])}
-      xfGB(t,church?gStone:gB2,b.cx,b.cy,b.a);xfGB(tw,gB2,b.cx,b.cy,b.a);xfGB(tr,gR2,b.cx,b.cy,b.a);continue}
+      xfGB(t,church?gStone:gB2,b.cx,b.cy,b.a,b.base||0);xfGB(tw,gB2,b.cx,b.cy,b.a,b.base||0);xfGB(tr,gR2,b.cx,b.cy,b.a,b.base||0);continue}
     if(b.kind==='tower'){wallsBox(t,-w,-h,w,h,0,H,cc);roofQ(t,-w,-h,w,h,H,rc);facade(t,ts,-w,-h,w,h,0,H,lc,pc,dk,true);if(b.H>=250){b.pad=true;ringG(t,-w,-h,w,h,H,H+2.6,.7,pc)}else roofExtras(t,b,-w,-h,w,h,H,pc,dk);xfGB(t,gB2,b.cx,b.cy,b.a);xfGB(ts,gS2,b.cx,b.cy,b.a);continue}
     if(b.kind==='steeple'){/* Kirchturm */wallsBox(t,-w,-h,w,h,0,H,cc);ringG(t,-w,-h,w,h,H-30,H-26,1.2,pc);const ap=[0,H+70,0];gbTri(tr,[-w-1,H,-h-1],[w+1,H,-h-1],ap,null,[0,1,-1]);gbTri(tr,[-w-1,H,h+1],[w+1,H,h+1],ap,null,[0,1,1]);gbTri(tr,[-w-1,H,-h-1],[-w-1,H,h+1],ap,null,[-1,1,0]);gbTri(tr,[w+1,H,-h-1],[w+1,H,h+1],ap,null,[1,1,0]);roofQ(t,-w,-h,w,h,H,pc);xfGB(t,gStone,b.cx,b.cy,b.a);xfGB(tr,gR2,b.cx,b.cy,b.a);continue}
     wallsBox(t,-w,-h,w,h,0,H,cc);roofQ(t,-w,-h,w,h,H,rc);ringG(t,-w,-h,w,h,H,H+3.5,.6,pc);if(b.kind!=='hall')facade(t,ts,-w,-h,w,h,0,H,lc,pc,dk,true);xfGB(t,gB2,b.cx,b.cy,b.a);xfGB(ts,gS2,b.cx,b.cy,b.a)}
@@ -1200,7 +1266,7 @@ function drawNetMinimap(){const m=mm.getContext('2d'),X=x=>(x-MAPB.x0)*MS,Y=y=>(
   m.fillStyle='#d9cfb8';m.beginPath();m.arc(X(CX),Y(CY),(NR0-28)*MS,0,TAU);m.fill();
   m.lineCap='round';m.lineJoin='round';for(const pass of [0,1])for(const e of NET.edges){if(e.ext)continue;m.beginPath();e.pts.forEach((q,i)=>i?m.lineTo(X(q.x),Y(q.y)):m.moveTo(X(q.x),Y(q.y)));
     m.strokeStyle=pass?(e.cls==='ring'?'#f2e6b3':e.old?'#c8c3b8':'#b8bec6'):'rgba(0,0,0,.35)';m.lineWidth=e.hw*2*MS+(pass?0:1.6);m.stroke()}
-  for(const b of BLD){if(b.kind==='wall'){m.fillStyle='#6b5a44'}else m.fillStyle=b.kind==='house'?'#b5543a':b.kind==='church'||b.kind==='steeple'?'#7a6a55':b.kind==='special'?'#3d3f48':b.kind==='hall'?'#5f6670':b.kind==='barn'?'#8b3a2b':'#262a31';
+  for(const b of BLD){if(b.kind==='wall'){m.fillStyle='#6b5a44'}else m.fillStyle=b.kind==='gwall'?'#9a9a9a':b.kind==='house'?'#b5543a':b.kind==='church'||b.kind==='steeple'?'#7a6a55':b.kind==='special'?'#3d3f48':b.kind==='hall'?'#5f6670':b.kind==='barn'?'#8b3a2b':'#262a31';
     if(b.round){m.beginPath();m.arc(X(b.cx),Y(b.cy),b.round.r*MS+.5,0,TAU);m.fill();continue}m.save();m.translate(X(b.cx),Y(b.cy));m.rotate(b.a);m.fillRect(-b.hw*MS,-b.hh*MS,b.hw*2*MS,b.hh*2*MS);m.restore()}
   for(const r of ROADS){const hw2=r.kind==='hwy',w=r.kind==='hwy'?7:r.kind==='dirt'?2.5:r.kind==='bridge'?4.5:3.2;m.beginPath();r.pts.forEach((q,i)=>i?m.lineTo(X(q.x),Y(q.y)):m.moveTo(X(q.x),Y(q.y)));if(r.closed)m.closePath();
     m.strokeStyle='rgba(0,0,0,.35)';m.lineWidth=w+2;m.stroke();m.strokeStyle=hw2?'#f2f2f2':r.kind==='dirt'?'#b48a5a':'#b8bec6';m.lineWidth=w;m.stroke();if(hw2){m.strokeStyle='#3d7bff';m.lineWidth=1.2;m.stroke()}}
@@ -1210,7 +1276,7 @@ function drawNetMinimap(){const m=mm.getContext('2d'),X=x=>(x-MAPB.x0)*MS,Y=y=>(
   m.font='bold 10px system-ui';const hp=HW.pts[Math.round(HW.pts.length*.55)];m.fillStyle='#1f4fbf';rrp(X(hp.x)-11,Y(hp.y)-7,22,14,3);m.fill();m.fillStyle='#fff';m.fillText('A1',X(hp.x),Y(hp.y)+4)}
 drawNetMinimap();
 
-buildCity3D();buildHelipads();
+buildCity3D();buildHelipads();buildHomes3D();
 
 // lights
 const hemi=new THREE.HemisphereLight(0xcfe8ff,0x4a4a3a,.75);scene.add(hemi);
@@ -1410,7 +1476,7 @@ function addFixed(){for(const q of PIERS){const horiz=q.w>q.h;for(const s of [-1
     const a=horiz?(q.x<0?Math.PI:0):(q.y<0?-Math.PI/2:Math.PI/2);const b=makeCar('boat',x,y,a);b.fixed=true;b.color=pick(['#f5f5f5','#ffd23f','#ff4d6d','#4ea8ff']);cars.push(b)}}
   const t=makeCar('taxi',TAXIB.x+B/2+40,roadC(3)-48,0);t.fixed=true;cars.push(t);const ft=makeCar('fire',FIREB.x+B/2,roadC(3)-48,0);ft.fixed=true;ft.color='#c1121f';cars.push(ft);
   const bk=makeCar('bike',SAFEB.x+B/2+40,roadC(7)-48,0);bk.fixed=true;bk.color='#ff2e88';cars.push(bk)}
-function keepCar(c){if(c.gone)return false;if(c.net)return true;const d=MP.on?mpD(c):d2(c,player);if(c===player.car||(player.entering&&player.entering.car===c))return true;if(c.type==='boat'&&c.fixed)return true;if(c.racer)return true;
+function keepCar(c){if(c.gone)return false;if(c.net||c.display)return true;const d=MP.on?mpD(c):d2(c,player);if(c===player.car||(player.entering&&player.entering.car===c))return true;if(c.type==='boat'&&c.fixed)return true;if(c.racer)return true;
   if(c.mine)return !c.wrecked||d<1600;if(c.fixed)return d<2600;if(c.ctrl==='cop'&&!c.leave)return d<2400;if(c.leave)return d<offR()+150;if(c.siren&&stars>0)return d<1800;return d<1600}
 function populate(){peds=peds.filter(p=>!p.dead&&(p.fare||(p.clerk&&p.state==='clerk'&&d2(p,player)<2200)||(MP.on?mpD(p):d2(p,player))<1450));cars=cars.filter(keepCar);
   cops=cops.filter(p=>!p.dead&&d2(p,player)<1450&&!(stars===0&&d2(p,player)>offR()+60));pickups=pickups.filter(p=>p.t<45&&d2(p,player)<1600);
@@ -1578,7 +1644,7 @@ function updateHeli(dt){if(!heli)return;const h=heli;let tx,ty;
   if(h.leave&&d2(h,player)>offR()+500)heli=null}
 
 // ================= PLAYER =================
-function nearestCar(){let best=null,bd=58;for(const c of cars){if(c.wrecked||(c.net&&!c.shared))continue;const d=d2(c,player);if(d<bd){bd=d;best=c}}return best}
+function nearestCar(){let best=null,bd=58;for(const c of cars){if(c.wrecked||(c.net&&!c.shared)||c.display)continue;const d=d2(c,player);if(d<bd){bd=d;best=c}}return best}
 function nearestPed(r){let best=null,bd=r;for(const q of peds){if(q.state==='ko'||q.state==='down'||q.state==='hands'||q.fare||q.clerk)continue;const d=d2(q,player);if(d<bd){bd=d;best=q}}return best}
 function enterCar(c){const p=player;if(c.shared)mpTake(c);
   if(c.ctrl==='ai'){c.ctrl='none';c.vx=Math.cos(c.a)*c.speed*.25;c.vy=Math.sin(c.a)*c.speed*.25;const dp=doorPos(c);
@@ -1643,7 +1709,7 @@ function updatePlayer(dt){const p=player;p.hurtT=Math.max(0,p.hurtT-dt);p.fireT-
     for(const q of peds.concat(cops))if(q.state!=='ko'&&hyp(q.x-hx,q.y-hy)<(bat?21:17)){hit=q;break}
     if(!hit&&MP.on)mpMelee(hx,hy,p.weapon);
     if(hit){bat?sfx.bat():sfx.punch();shake=Math.max(shake,bat?5:3);spark(hx,hy,16);const kn=p.weapon==='knife',sp2=cheats.superpunch?4:1,kv=(bat?240:kn?170:120)*sp2;knock(hit,Math.cos(p.a)*kv,Math.sin(p.a)*kv,(bat?21:kn?17:(hit.state==='down'?20:11))*(cheats.superpunch?3:1),true);scare(p.x,p.y,220)}}}
-  if(tap('KeyF')||tap('KeyE')){const c=nearestCar();if(c)enterCar(c)}
+  if(tap('KeyF')||tap('KeyE')){const c=nearestCar();if(c)enterCar(c);else{const h=homeNear();if(h)homeMenu(h)}}
   if(tap('KeyR')){const st=nearStore();if(st)robStore(st);else{const q=nearestPed(50);if(q){if(q.shared)mpPedEv(q,'hands');q.state='hands';q.timer=1.3;q.a=Math.atan2(p.y-q.y,p.x-q.x);q.vx=q.vy=0;stats.robs++;crime(1,.5);floatText(q.x,q.y,'Hände hoch! 🙌','#ffd23f');scare(p.x,p.y,180)}else toast('Niemand in der Nähe zum Ausrauben')}}
   if(tap('KeyH'))sfx.horn();if(tap('KeyT'))toast('🚕 Steig in ein Taxi, dann '+(isTouch?'🚕':'T')+' für Taxi-Jobs')}
 
@@ -1725,6 +1791,7 @@ function updateMission(dt){const m=mission;if(!m||(state!=='play'&&state!=='insi
     const pp=raceProg(player.cp,pc);let pos=1;for(const r of m.racers)if(r.finished||raceProg(r.cp,r)>pp)pos++;
     setMission('🏁 STRASSENRENNEN','Platz <b style="display:inline;color:#fff">'+pos+'/4</b> · Checkpoint '+player.cp+'/'+m.cps.length+' · '+m.t.toFixed(1)+' s',player.cp/m.cps.length)}}
 function markerEnter(m){const pc=player.car;
+  if(m.id==='dealer'){if(pc&&hyp(pc.vx,pc.vy)>60)return;openDealer();return}if(m.id.startsWith('home:')){if(pc)return;const h=homeById(+m.id.slice(5));if(h)homeMenu(h);return}
   if(m.id==='shop'||m.id==='shop2'){if(pc)toast('Steig aus, um den Laden zu betreten');else openShop()}
   else if(m.id==='bank'){if(pc)return;if(mission){if(mission.type!=='bank')toast('Erst die aktuelle Mission beenden');return}if(!hasGunWithAmmo()){toast('🔫 Für einen Banküberfall brauchst du eine Schusswaffe mit Munition!');return}
     if(stars>0){toast('⭐ Häng erst die Cops ab!');return}startBank()}
@@ -1754,7 +1821,7 @@ function openShop(){const h=player.has,A=player.ammo;
     {label:'🚪 Laden verlassen',fn:closeModal}])}
 const SAVE_KEY='neonbay3d_save_v1';
 function myCarSave(){const c=cars.find(o=>o.mine&&!o.wrecked);return c?{type:c.type,color:c.baseColor||c.color,mods:c.mods||null}:null}
-function saveGame(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({money:player.money,has:player.has,ammo:player.ammo,armor:player.armor,weapon:player.weapon,inv,stats,gameMin,radioIdx,myCar:myCarSave(),cu:cheats.unlocked,look:player.look,bike:player.bike||null,pt:Math.round(playT),ts:Date.now()}));return true}catch(e){return false}}
+function saveGame(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({money:player.money,has:player.has,ammo:player.ammo,armor:player.armor,weapon:player.weapon,inv,stats,gameMin,radioIdx,myCar:null,cars:ownedSave(),homes:HOMES.filter(h=>h.owned).map(h=>h.id),cu:cheats.unlocked,look:player.look,bike:player.bike||null,pt:Math.round(playT),ts:Date.now()}));return true}catch(e){return false}}
 function loadSave(){try{const s=localStorage.getItem(SAVE_KEY);return s?JSON.parse(s):null}catch(e){return null}}
 function openSafe(){openModal('🏠 SAFEHOUSE','Hier bist du sicher. Speichern füllt Leben auf und spult 8 Stunden vor.',[
   {label:'💾 Schlafen (Leben auffüllen)',fn:()=>{player.hp=100;gameMin+=480;const ok=saveGame();closeModal();showMBig(ok?'GESPEICHERT':'SPEICHERN NICHT MÖGLICH',ok?'Gute Nacht 😴':'Dein Browser blockiert den Speicher',2200)}},
@@ -1798,7 +1865,7 @@ function gBuy(){const c=garage.car,it=gItems()[garage.sel];if(!it)return;
   if(!cheats.money&&player.money<it.price){toast('❌ Zu wenig Geld');sfx.fail();const el=$('glist');el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');return}
   if(!cheats.money)player.money-=it.price;
   if(it.repair){c.hp=c.maxhp;c.burning=false;c.fireT=0;c.dents=[];c.brokenHead=c.brokenTail=false;c.dmgVer=0;toast('🔧 Wie neu!')}
-  else{it.set(garage.saved);for(const o of cars)if(o!==c)o.mine=false;c.mine=true;toast('✓ '+it.name+' verbaut!')}
+  else{it.set(garage.saved);toast('✓ '+it.name+' verbaut!')}
   gPreview();garage.flash=1;gFX();sfx.buy();gRender()}
 function gBack(){if(garage.cat<0){closeGarage();return}gRevert();const ci=garage.cat;garage.cat=-1;garage.sel=ci;garage.anim=true;gRender();sfx.click()}
 function gRender(){if(!garage)return;const c=garage.car,items=gItems(),cat=garage.cat<0?null:gCats()[garage.cat],gl=$('glist');
@@ -2012,7 +2079,9 @@ function phoneApp(a){sfx.phone();
   if(a==='back'){pview.classList.remove('show');return}
   if(a==='map'){mapOpen=true;closePhone();if(document.exitPointerLock&&document.pointerLockElement)document.exitPointerLock();return}
   if(a==='cheat'){closePhone();openCheat();return}
-  if(a==='car'){if(player.money<300&&!cheats.money){toast('❌ Zu wenig Geld ($300)');return}const had=cars.some(o=>o.mine&&!o.wrecked&&o!==player.car);if(!cheats.money)player.money-=300;spawnMyCar();toast(had?'🔧 Der Mechaniker bringt dein Auto!':'🏎️ Dein Sportwagen steht direkt neben dir!');closePhone();return}
+  if(a==='car'){towList();return}
+  if(a==='immo'){immoList();return}
+  if(a==='dealer'){dealerList();return}
   if(a==='law'){if(stars===0){toast('⚖️ Du wirst gerade nicht gesucht');return}if(player.money<400){toast('❌ Zu wenig Geld ($400)');return}
     player.money-=400;heat=stars-1;stars=heat;escT=0;if(stars===0){lostCops();toast('⚖️ Anwalt hat alles geregelt!')}else toast('⚖️ Anwalt: -1 Stern');return}
   if(a==='heal'){if(player.hp>=100){toast('❤️ Du bist schon fit');return}if(player.money<150){toast('❌ Zu wenig Geld ($150)');return}player.money-=150;player.hp=100;toast('❤️ Voll geheilt!');return}
@@ -2047,7 +2116,7 @@ function update(dt){if(state==='play'&&!update.vp&&Math.hypot(player.x-VIEWP.x,p
   if(cheats.money)player.money=9999999;if(cheats.nowanted&&heat>0){heat=0;stars=0;lostCops()}if(cheats.ammo)giveAll();if(cheats.sprint){player.stamina=100;player.exhausted=false}
   wanted(dt);updateMission(dt);updateRoute(dt);if(waypoint&&!mission&&state==='play'&&hyp(player.x-waypoint.x,player.y-waypoint.y)<70){waypoint=null;route=null;toast('📍 Ziel erreicht!');sfx.cp()}
   if(state==='play'&&!player.entering)for(const m of MARKERS){const ins=hyp(m.x-player.x,m.y-player.y)<m.r;if(ins&&!m.inside)markerEnter(m);m.inside=ins}
-  spawnT-=dt;if(spawnT<=0){spawnT=.25;populate()}
+  spawnT-=dt;if(spawnT<=0){spawnT=.25;populate()}if(state==='play')homesTick(dt);
   gameMin+=dt*6;if(state==='play'&&stars===0&&player.hp<100)player.hp=Math.min(100,player.hp+dt*1.5);tutT+=dt;manualT-=dt;shake=Math.max(0,shake-dt*25);boomLight.intensity=Math.max(0,boomLight.intensity-dt*6);
   if(state==='play'){const ar=districtAt(player.x,player.y);if(ar!==lastArea){lastArea=ar;const el=$('area');el.innerHTML='<small>NEON BAY</small>'+ar;el.classList.add('show');clearTimeout(update.ah);update.ah=setTimeout(()=>el.classList.remove('show'),3200)}}
   if(AC){const t=AC.currentTime,c=player.car,sp=c?hyp(c.vx,c.vy):0;{const on=!muted&&c&&!c.wrecked&&state==='play'&&c.type!=='bicycle';let f0=40,vol=0;if(on){const ab=Math.abs(c.speed||0),gs=c.spec.max/(c.type==='boat'?3:5),gr=Math.min(4,Math.floor(ab/gs)),rp=clamp((ab-gr*gs)/gs,0,1),th=Math.abs(player.inp.thr||0);engRpm=lerp(engRpm,.15+rp*.8+th*.1,Math.min(1,lastDt*8+.05));
@@ -2252,7 +2321,7 @@ function render3D(rdt){frameId++;const nf=lighting();updateCamera(rdt);
   for(const c of cars){if(!vis(c))continue;if(!c.mesh)c.mesh=buildCar(c);track(c.mesh);animCar(c,c.mesh)}
   for(const p of peds.concat(cops)){if(!vis(p))continue;if(!p.mesh)p.mesh=buildPed(p);track(p.mesh);animPed(p,p.mesh)}
   if(state!=='start'&&!player.car){if(!player.mesh)player.mesh=buildPed(player);track(player.mesh);animPed(player,player.mesh)}
-  if(MP.on){if(!MP.host)mpTrafficFrame(rdt);mpOwnFrame(rdt);mpFrame(rdt)}
+  homesFrame(rdt);if(MP.on){if(!MP.host)mpTrafficFrame(rdt);mpOwnFrame(rdt);mpFrame(rdt)}
   for(const m of pickups){if(!m.mesh){m.mesh=new THREE.Group();box(M3.cash,9,1.4,5,0,0,0,m.mesh);box('#e8f5e9',2,1.6,2,0,0,0,m.mesh)}track(m.mesh);m.mesh.position.set(m.x,groundH(m.x,m.y)+5+Math.sin(now*4+m.x)*1.5,m.y);m.mesh.rotation.y=now*2}
   for(const g of grenades){if(!g.mesh){g.mesh=new THREE.Mesh(G.sph,mat('#3d5a2a'));g.mesh.scale.setScalar(1.6)}track(g.mesh);g.mesh.position.set(g.x,g.z,g.y)}
   if(heli){if(!heli.mesh)heli.mesh=buildHeli();track(heli.mesh);const u=heli.mesh.userData.u;heli.mesh.position.set(heli.x,heli.z+Math.sin(now*1.3)*3,heli.y);heli.mesh.rotation.y=-heli.a;heli.mesh.rotation.z=-.08;
@@ -2339,6 +2408,7 @@ function drawMap(){hx.fillStyle='rgba(5,8,15,.9)';hx.fillRect(0,0,VW,VH);const {
   const t=navTarget();if(t)strokeRoute((x,y)=>[mx+x*s,my+y*s],t.col,5);
   const isz=Math.round(clamp(WORLD*s/26,16,30));hx.font=isz+'px system-ui';for(const m of MARKERS){const x=mx+m.x*s,y=my+m.y*s;hx.fillStyle='rgba(0,0,0,.55)';hx.beginPath();hx.arc(x,y,isz*.72,0,TAU);hx.fill();hx.fillText(m.icon,x,y+1)}
   for(const c of cars){if(c.mine&&!c.wrecked){hx.font=Math.round(isz*.9)+'px system-ui';hx.fillText('🏎️',mx+c.x*s,my+c.y*s)}if(c.siren)blip(mx+c.x*s,my+c.y*s,4,Math.floor(now*6)%2?'#ff3030':'#3d7bff');if(c.type==='boat')blip(mx+c.x*s,my+c.y*s,3,'#fff')}
+  for(const h of HOMES){if(h.owned||h.nosale)continue;const X=mx+h.door.x*s,Y=my+h.door.y*s;hx.fillStyle='#ffd23f';hx.strokeStyle='#000';hx.lineWidth=1;hx.beginPath();hx.arc(X,Y,3.2,0,TAU);hx.fill();hx.stroke()}
   if(MP.on)for(const [,rp] of MP.players){mpMapIcon(mx+rp.av.x*s,my+rp.av.y*s,rp.av.a,rp.col,11,rp.n,rp)}hx.font=isz+'px system-ui';hx.textAlign='center';hx.textBaseline='middle';
   if(t){if(t.wp){hx.font=Math.round(isz*1.1)+'px system-ui';hx.fillText('📍',mx+t.x*s,my+t.y*s-isz*.4)}else blip(mx+t.x*s,my+t.y*s,7+Math.sin(now*6)*2,t.col)}
   const px=mx+player.x*s,py=my+player.y*s;hx.save();hx.translate(px,py);hx.rotate(player.a);hx.fillStyle='#ffd23f';hx.strokeStyle='#000';hx.lineWidth=2;hx.beginPath();hx.moveTo(11,0);hx.lineTo(-8,-7);hx.lineTo(-4,0);hx.lineTo(-8,7);hx.closePath();hx.fill();hx.stroke();hx.restore()}
@@ -2346,10 +2416,11 @@ let legendOpen=false,legendT=0;
 function legendItems(){const L=[],P=player.car||player,dist=(x,y)=>Math.round(hyp(x-P.x,y-P.y)/8);
   const sec=n=>L.push({sec:n});
   if(waypoint){sec('WEGPUNKT');L.push({ic:'📍',nm:'Wegpunkt entfernen',x:waypoint.x,y:waypoint.y,clear:true})}
-  sec('ORTE');for(const m of MARKERS)if(!m.id.startsWith('store'))L.push({ic:m.icon,nm:m.label,x:m.x,y:m.y});
+  sec('ORTE');for(const m of MARKERS)if(!m.id.startsWith('store')&&!m.id.startsWith('home:'))L.push({ic:m.icon,nm:m.label,x:m.x,y:m.y});
+  {const own=HOMES.filter(h=>h.owned);sec('IMMOBILIEN');for(const h of own)L.push({ic:'🏠',nm:h.name+' (dein Haus)',x:h.door.x,y:h.door.y});const fs=HOMES.filter(h=>!h.owned&&!h.nosale).sort((a,b)=>a.price-b.price);for(const h of [fs[0],fs[Math.floor(fs.length/2)],fs[fs.length-1]])if(h)L.push({ic:'🏷️',nm:h.name+' · '+fmt$(h.price),x:h.door.x,y:h.door.y})}
   sec('24/7-LÄDEN');STORES.forEach((st,k)=>L.push({ic:'🏪',nm:MARKERS.find(m=>m.id==='store'+k).label,x:st.x,y:st.doorY+30,cool:st.cool}));
   sec('ALTSTADT & PARKS');L.push({ic:'⛪',nm:'Marktplatz & Kirche',x:CX,y:CY});NPARKS.forEach(p=>L.push({ic:p.skate?'🛹':p.pond?'🦆':'🌳',nm:p.skate?'Skatepark':p.pond?'Stadtpark mit Teich':'Stadtpark',x:p.x,y:p.y}));
-  sec('WÜSTE SÜD');L.push({ic:'🛣️',nm:'Zubringer zur A1',x:roadC(4),y:(WORLD+SCY)/2});L.push({ic:'⛽',nm:'Tankstelle',x:GAS.x,y:GAS.y});L.push({ic:'🌵',nm:'Sandtown',x:TOWN.x,y:TOWN.y});RAMPS.forEach((r,k)=>L.push({ic:'⤴️',nm:'Sprungschanze '+(k+1),x:r.x,y:r.y}));
+  sec('WÜSTE SÜD');L.push({ic:'🛣️',nm:'Zubringer zur A1',x:roadC(4),y:(WORLD+SCY)/2});L.push({ic:'⛽',nm:'Tankstelle',x:GAS.x,y:GAS.y});L.push({ic:'🌵',nm:'Sandtown',x:TOWN.x,y:TOWN.y});L.push({ic:'🏘️',nm:'Dünendorf (günstige Häuser)',x:4600,y:6130});RAMPS.forEach((r,k)=>L.push({ic:'⤴️',nm:'Sprungschanze '+(k+1),x:r.x,y:r.y}));
   sec('BERGE');L.push({ic:'🛣️',nm:'Bergstraße',x:RD.pts[40].x,y:RD.pts[40].y});L.push({ic:'🔭',nm:'Aussichtspunkt (Berggipfel)',x:VIEWP.x,y:VIEWP.y});
   if(PIERS.length){sec('BOOTSSTEGE');PIERS.forEach((q,k)=>L.push({ic:'🚤',nm:'Bootssteg '+['West','Süd'][k],x:q.x+q.w/2,y:q.y+q.h/2}))}
   if(MP.on&&MP.players.size){sec('MITSPIELER');for(const [,rp] of MP.players)L.push({ic:rp.inCar?'🚗':'🧑',nm:rp.n+(rp.ws?' ★'+rp.ws:''),x:rp.av.x,y:rp.av.y})}
@@ -2394,7 +2465,7 @@ function prompts(){let a=null,b=null,sa=null,sb=null;
     setPrompt(0,a,sa);setPrompt(1,null,null);return}
   if(state==='play'&&!mapOpen&&!phoneOpen&&!player.entering){const rx=Math.cos(camYaw+Math.PI/2),ry=Math.sin(camYaw+Math.PI/2);
     const kb=(k,ic,txt,code)=>'<span class="pk" data-k="'+code+'"><kbd>'+(isTouch?ic:k)+'</kbd>'+txt+'</span>';
-    if(!player.car){const c=nearestCar();if(c){const o=c.spec.W/2+6;a=kb('F','🚗',c.ctrl==='ai'||c.ctrl==='cop'?'Klauen 😈':c.type==='boat'?'Boot fahren':c.type==='bike'||c.type==='bicycle'?'Aufsteigen':'Einsteigen','KeyF');sa=proj(c.x+rx*o,c.y+ry*o,c.type==='boat'?10:16)}
+    if(!player.car){const c=nearestCar();if(c){const o=c.spec.W/2+6;a=kb('F','🚗',c.ctrl==='ai'||c.ctrl==='cop'?'Klauen 😈':c.type==='boat'?'Boot fahren':c.type==='bike'||c.type==='bicycle'?'Aufsteigen':'Einsteigen','KeyF');sa=proj(c.x+rx*o,c.y+ry*o,c.type==='boat'?10:16)}else{const h=homeNear();if(h){a=kb('E','🏠',h.owned?'Nach Hause':'Haus kaufen · '+fmt$(h.price),'KeyE');sa=proj(h.door.x,h.door.y,24)}}
       const st=nearStore();if(st&&!mission){b=st.cool>0?'<span class="pk"><kbd>⏳</kbd>Kasse leer ('+Math.ceil(st.cool)+' s)</span>':kb('R','💰','Laden ausrauben 🏪','KeyR');sb=proj(st.x+rx*22,st.cy+ry*22,24)}
       else{const q=nearestPed(50);if(q){b=kb('R','💰','Ausrauben','KeyR')+kb('Leertaste',WNAME[player.weapon],'Angriff','Space');sb=proj(q.x+rx*8,q.y+ry*8,24)}}}
     else if((player.car.type==='taxi'||player.car.type==='fire')&&!mission){const c=player.car,o=c.spec.W/2+6,f=c.type==='fire';a=kb('T',f?'🚒':'🚕',f?'Feuerwehr-Job starten':'Taxi-Job starten','KeyT');sa=proj(c.x+rx*o,c.y+ry*o,18)}}
@@ -2406,8 +2477,8 @@ $('mmhit').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagati
 function startGame(cont){initAudio();$('start').classList.add('hide');const sv=cont?loadSave():null;playT=sv&&sv.pt||0;gameOn=true;
   if(sv){if(sv.look){player.look=Object.assign(JSON.parse(JSON.stringify(LOOK_DEF)),sv.look);player.look.tat=Object.assign({armL:0,armR:0,neck:0},sv.look.tat||{});rebuildPlayer()}player.money=sv.money;player.has=sv.has||player.has;player.ammo=typeof sv.ammo==='number'?{pistol:sv.ammo,smg:0,shotgun:0,grenade:0}:Object.assign({pistol:0,smg:0,shotgun:0,grenade:0},sv.ammo||{});player.has=Object.assign({knife:false,bat:false,pistol:false,smg:false,shotgun:false,grenade:false},sv.has||{});if(sv.inv)Object.assign(inv,sv.inv);player.armor=sv.armor||0;player.weapon=sv.weapon||'fist';Object.assign(stats,sv.stats||{});gameMin=sv.gameMin||gameMin;if(sv.radioIdx!=null)radioIdx=sv.radioIdx;
     state='loading';respawn({x:FIXPOS.spawn.x,y:FIXPOS.spawn.y});toast('💾 Spielstand geladen – willkommen zurück!');if(sv.cu)cheats.unlocked=true;
-    if(sv.myCar){const c=makeCar(sv.myCar.type,FIXPOS.mycar.x,FIXPOS.mycar.y,FIXPOS.mycar.a);c.mine=true;c.baseColor=c.color=sv.myCar.color;if(sv.myCar.mods){c.mods=sv.myCar.mods;applyMods(c)}cars.push(c)}player.bike=sv.bike||null;if(player.bike)spawnOwnBike()}
-  else{player.bike=null;state='loading';respawn()}tutT=0;try{window.focus()}catch(e){}}
+    homesLoad(sv);player.bike=sv.bike||null;if(player.bike)spawnOwnBike()}
+  else{player.bike=null;homesLoad({});state='loading';respawn()}tutT=0;try{window.focus()}catch(e){}}
 $('playBtn').addEventListener('click',()=>startGame(false));$('contBtn').addEventListener('click',()=>startGame(true));
 if(loadSave())$('contBtn').style.display='inline-block';
 
@@ -2428,7 +2499,7 @@ function globalKeys(){if(state==='style'){if(tap('Escape'))closeStyle();for(cons
   if(tap('KeyN')){muted=!muted;toast(muted?'🔇 Ton aus':'🔊 Ton an')}
   if(tap('KeyM')){mapOpen=!mapOpen;if(mapOpen){closePhone();if(document.exitPointerLock&&document.pointerLockElement)document.exitPointerLock()}}
   if(tap('KeyP')||tap('Tab')){if(phoneOpen)closePhone();else if(state==='play'){openPhone();mapOpen=false}}
-  if(phoneOpen){const apps=['map','car','law','heal','stats','time','cheat'];for(let i=0;i<7;i++)if(tap('Digit'+(i+1))||tap('Numpad'+(i+1)))phoneApp(apps[i]);if(tap('Backspace'))phoneApp('back')}}
+  if(phoneOpen){const apps=['map','car','law','heal','stats','time','cheat','immo','dealer'];for(let i=0;i<9;i++)if(tap('Digit'+(i+1))||tap('Numpad'+(i+1)))phoneApp(apps[i]);if(tap('Backspace'))phoneApp('back')}}
 let last=performance.now(),lastDt=0;
 function frame(t){fpsTick((t-last)/1000);if(AC&&state!=='play'&&state!=='inside'){const at=AC.currentTime;if(radioG)radioG.gain.setTargetAtTime(0,at,.05);if(engG)engG.gain.setTargetAtTime(0,at,.05);if(sirG)sirG.gain.setTargetAtTime(0,at,.05)}const rdt=Math.min(.05,Math.max(0,(t-last)/1000));last=t;globalKeys();
   if(INT.active&&(state==='inside'||state==='menu'||state==='inv')){if(state==='inside')interiorTick(rdt);if(INT.active)renderInterior(rdt);drawHud();hudDom();prompts();for(const k in pressed)delete pressed[k];requestAnimationFrame(frame);return}
@@ -3028,7 +3099,7 @@ function mpPopulate(){if(!(MP.on&&MP.host))return;const ox=player.x,oy=player.y,
   for(const q of mpCenters()){if(hyp(q.x-ox,q.y-oy)<900)continue;let n=0;for(const c of cars)if(c.ctrl==='ai'&&!c.hwy&&hyp(c.x-q.x,c.y-q.y)<1350)n++;
     const before=cars.length,pb=peds.length;let np=0;for(const p of peds)if(!p.fare&&!p.clerk&&hyp(p.x-q.x,p.y-q.y)<1350)np++;player.x=q.x;player.y=q.y;try{if(n<CARCAP)spawnTraffic(mr);spawnHwy();if(np<PEDCAP){spawnPed(mr);if(np<PEDCAP-12)spawnPed(mr)}}catch(e){}player.x=ox;player.y=oy;for(let i=peds.length-1;i>=pb;i--){const p=peds[i];if(hyp(p.x-ox,p.y-oy)<mr)peds.splice(i,1)}
     for(let i=cars.length-1;i>=before;i--){const c=cars[i];if(hyp(c.x-ox,c.y-oy)<mr)cars.splice(i,1)}}}
-function mpShareable(c){return !(c.police&&c.crew!==undefined)&&!c.net&&!c.gone&&c!==player.car&&!(player.entering&&player.entering.car===c)&&!c.fixed&&!c.rackOf&&!c.ownBike&&c.type!=='boat'&&(c.ctrl==='ai'||c.ctrl==='cop'||c.ctrl==='none')}
+function mpShareable(c){return !c.mine&&!c.display&&!(c.police&&c.crew!==undefined)&&!c.net&&!c.gone&&c!==player.car&&!(player.entering&&player.entering.car===c)&&!c.fixed&&!c.rackOf&&!c.ownBike&&c.type!=='boat'&&(c.ctrl==='ai'||c.ctrl==='cop'||c.ctrl==='none')}
 function mpTrafficOut(){if(!MP.conns.size)return;const sh=cars.filter(mpShareable);for(const c of sh)if(!c.nid)c.nid=++MP.nid;
   for(const [id,conn] of MP.conns){if(!conn.open)continue;const rp=MP.players.get(id);if(!rp)continue;conn.known=conn.known||new Set();const C=[],D=[];
     for(const c of sh){if(Math.abs(c.x-rp.av.x)>1500||Math.abs(c.y-rp.av.y)>1500)continue;
@@ -3082,6 +3153,65 @@ function mpCopHitCheck(b){for(const q of mpRCops()){if(hyp(q.x-b.x,q.y-b.y)<10){
 
 function mpMapIcon(x,y,a,col,sz,name,rp){hx.save();hx.translate(x,y);hx.rotate(a);hx.fillStyle=col;hx.strokeStyle='#000';hx.lineWidth=1.6;hx.beginPath();hx.moveTo(sz,0);hx.lineTo(-sz*.75,-sz*.68);hx.lineTo(-sz*.35,0);hx.lineTo(-sz*.75,sz*.68);hx.closePath();hx.fill();hx.stroke();hx.restore();
   if(name){const t=name+(rp&&rp.inCar?' 🚗':'')+(rp&&rp.ws?' '+'★'.repeat(rp.ws):'');hx.font='bold '+(sz>8?12:10)+'px system-ui';hx.textAlign='center';hx.textBaseline='middle';const w=hx.measureText(t).width+8;hx.fillStyle='rgba(0,0,0,.6)';hx.fillRect(x-w/2,y-sz-15,w,14);hx.fillStyle=rp&&rp.ws?'#ff6b6b':col;hx.fillText(t,x,y-sz-8)}}
+
+// ===== IMMOBILIEN & AUTOHAUS: Spiellogik =====
+const OWNED=[],OWNMAX=6;let OWN_SEQ=1;
+const fmt$=v=>'$'+Math.round(v).toLocaleString('de-DE');
+function homeById(id){return HOMES.find(h=>h.id===id)}
+function inGarage(h,x,y){if(!h.gar)return false;const {lx,ly}=homeLocal(h,x,y);return Math.abs(lx-h.glx)<16&&ly>h.hh-GD+4&&ly<h.hh-4}
+function ownCar(c){c.mine=true;c.oid=OWN_SEQ++;if(!c.baseColor)c.baseColor=c.color;const r={oid:c.oid,type:c.type,color:c.baseColor,mods:c.mods||null,home:null,g:false,car:c};OWNED.push(r);return r}
+function ownedRec(c){return c&&c.oid?OWNED.find(r=>r.oid===c.oid):null}
+function ownedSave(){return OWNED.map(r=>{const c=r.car;if(c&&!c.wrecked&&cars.includes(c)){r.color=c.baseColor||c.color;r.mods=c.mods||null}else{r.car=null;if(c&&c.wrecked)r.home=null}return{oid:r.oid,type:r.type,color:r.color,mods:r.mods,home:r.home,g:r.g}})}
+function spawnOwned(r,spot){const c=makeCar(r.type,spot.x,spot.y,spot.a||0);c.mine=true;c.oid=r.oid;c.baseColor=c.color=r.color;if(r.mods){c.mods=r.mods;applyMods(c)}c.ctrl='none';r.car=c;cars.push(c);return c}
+function homesLoad(sv){for(const h of HOMES){if(h.owned)homeMarker(h,false);h.owned=false}for(const r of OWNED)if(r.car){r.car.gone=true}cars=cars.filter(c=>!c.gone);OWNED.length=0;
+  for(const id of sv.homes||[]){const h=homeById(id);if(h&&!h.nosale){h.owned=true;homeMarker(h,true)}}
+  const list=sv.cars||(sv.myCar?[{oid:1,type:sv.myCar.type,color:sv.myCar.color,mods:sv.myCar.mods,home:null,g:false}]:[]);let placedFree=false;
+  for(const d of list){const r={oid:d.oid||OWN_SEQ,type:SPECS[d.type]?d.type:'sedan',color:d.color||'#ff2e88',mods:d.mods||null,home:d.home||null,g:!!d.g,car:null};OWN_SEQ=Math.max(OWN_SEQ,r.oid+1);OWNED.push(r);
+    const h=r.home?homeById(r.home):null;if(h&&h.owned){spawnOwned(r,r.g&&h.gar?h.gpark:h.park);continue}r.home=null;
+    if(!placedFree){placedFree=true;spawnOwned(r,FIXPOS.mycar)}}
+  for(const h of HOMES)if(h.sign)h.sign.visible=!h.owned}
+function homeMarker(h,on){const id='home:'+h.id,i=MARKERS.findIndex(m=>m.id===id);if(on&&i<0){const m=mkM(id,h.door.x+h.fx*4,h.door.y+h.fy*4,'🏠','#4ea8ff',h.name,16);MARKERS.push(m);MK[id]=m}else if(!on&&i>=0){MARKERS.splice(i,1);delete MK[id]}}
+function homeNear(){if(player.car)return null;let best=null,bd=28;for(const h of HOMES){if(h.nosale&&!h.owned)continue;const d=hyp(h.door.x-player.x,h.door.y-player.y);if(d<bd){bd=d;best=h}}return best}
+function homeCars(h){return OWNED.filter(r=>r.home===h.id)}
+function homeDesc(h){return (h.desert?'🌵 Dünendorf':'🏙️ '+h.district)+' · '+(h.gar?'🚗 mit Garage':'🅿️ Parkplatz vor dem Haus')+' · '+(h.hw*h.hh/80|0)+' m²'}
+function homeMenu(h){if(h.owned){const cs=homeCars(h);openModal('🏠 '+h.name.toUpperCase(),'<div style="font-size:13px;line-height:1.5">Dein Zuhause. '+homeDesc(h)+'<br>'+(cs.length?'Hier geparkt: '+cs.map(r=>carName(r.type)).join(', '):'Park dein Auto '+(h.gar?'in der Garage':'davor')+', dann ist es gespeichert.')+'<br><small style="opacity:.75">Wert: '+fmt$(h.price)+' · Verkauf bringt '+fmt$(h.price*.6)+'</small></div>',[
+      {label:'💾 Schlafen (Leben auffüllen & speichern)',fn:()=>{if(stars>0){toast('⭐ Häng erst die Cops ab!');return}player.hp=100;gameMin+=480;const ok=saveGame();closeModal();showMBig(ok?'GESPEICHERT':'SPEICHERN NICHT MÖGLICH',ok?'Gute Nacht 😴':'Dein Browser blockiert den Speicher',2200)}},
+      {label:'💸 Haus verkaufen ('+fmt$(h.price*.6)+')',fn:()=>{openModal('💸 WIRKLICH VERKAUFEN?','Du bekommst '+fmt$(h.price*.6)+'. Autos, die hier stehen, bleiben einfach stehen.',[{label:'Ja, verkaufen',fn:()=>{sellHome(h);closeModal()}},{label:'Nein',fn:()=>homeMenu(h)}])}},
+      {label:'Schließen',fn:closeModal}]);return}
+  openModal('🏷️ ZU VERKAUFEN: '+h.name.toUpperCase(),'<div style="font-size:13px;line-height:1.5">'+homeDesc(h)+'<br><b style="font-size:20px;color:#ffd23f">'+fmt$(h.price)+'</b><br><small style="opacity:.75">Eigene Häuser: Schlafen = speichern, Autos davor oder in der Garage parken = Auto gespeichert.</small></div>',[
+    {label:'🛒 Kaufen für '+fmt$(h.price),fn:()=>{buyHome(h)}},{label:'📍 Route hierher',fn:()=>{waypoint={x:h.door.x,y:h.door.y};routeT=0;closeModal();toast('📍 Route gesetzt')}},{label:'Schließen',fn:closeModal}])}
+function buyHome(h){if(h.owned||h.nosale)return false;const owned=HOMES.filter(o=>o.owned).length;if(owned>=8){toast('❌ Du besitzt schon 8 Häuser');return false}
+  if(!cheats.money&&player.money<h.price){toast('❌ Zu wenig Geld – du brauchst '+fmt$(h.price));sfx.fail&&sfx.fail();return false}if(!cheats.money)player.money-=h.price;
+  h.owned=true;if(h.sign)h.sign.visible=false;homeMarker(h,true);stats.homes=(stats.homes||0)+1;sfx.buy();closeModal();showMBig('🏠 GEKAUFT!',h.name+' gehört jetzt dir',2400);saveGame();return true}
+function sellHome(h){if(!h.owned)return;h.owned=false;player.money+=Math.round(h.price*.6);if(h.sign)h.sign.visible=true;homeMarker(h,false);for(const r of OWNED)if(r.home===h.id){r.home=null;r.g=false}toast('💸 '+h.name+' verkauft: +'+fmt$(h.price*.6));sfx.coin();saveGame()}
+function carName(t){return{sedan:'Limousine',van:'Van',bike:'Motorrad',sports:'Sportwagen',taxi:'Taxi',police:'Polizeiwagen',fire:'Feuerwehrauto',boat:'Boot',bicycle:'Fahrrad'}[t]||t}
+let homesT=0;function homesTick(dt){homesT-=dt;if(homesT>0)return;homesT=.5;
+  for(const r of OWNED){const c=r.car;if(!c)continue;if(c.wrecked||!cars.includes(c)){if(c.wrecked){r.home=null;r.g=false}r.car=null;continue}if(hyp(c.vx,c.vy)>22)continue;
+    let found=null,g=false;for(const h of HOMES){if(!h.owned)continue;if(inGarage(h,c.x,c.y)){found=h;g=true;break}if(hyp(c.x-h.park.x,c.y-h.park.y)<40&&c!==player.car){found=h;g=false;break}}
+    if(found){if(r.home!==found.id||r.g!==g){r.home=found.id;r.g=g;if(c===player.car||hyp(c.x-player.x,c.y-player.y)<80)toast(g?'🚗 In der Garage geparkt – '+carName(c.type)+' gespeichert':'🅿️ Vor '+found.name+' geparkt – '+carName(c.type)+' gespeichert')}}
+    else if(r.home){const h=homeById(r.home),sp=h&&(r.g?h.gpark:h.park);if(!h||!h.owned||hyp(c.x-sp.x,c.y-sp.y)>70){r.home=null;r.g=false}}}}
+// Abschleppdienst (Handy)
+function towList(){pview.innerHTML='<h3>🚚 Abschleppdienst <span class="back" data-a="back">✕</span></h3><div style="font-size:12px;line-height:1.4;margin-bottom:6px">Bringt eines deiner Autos für <b>$300</b> zu dir – kaputte Autos kommen repariert.</div><ul>'+
+  (OWNED.length?OWNED.map(r=>{const h=r.home?homeById(r.home):null;return '<li><span><div style="font-weight:700;font-size:13px">🏎️ '+carName(r.type)+'</div><small style="opacity:.7;font-size:11px">'+(r.car&&cars.includes(r.car)&&!r.car.wrecked?(h?'steht bei '+h.name:'steht irgendwo in der Stadt'):'in der Werkstatt')+'</small></span><b><button data-act="tow" data-oid="'+r.oid+'" style="background:#e63946;color:#fff;border:0;border-radius:8px;padding:5px 9px;font-weight:800;cursor:pointer">Holen</button></b></li>'}).join(''):'<li><span>Du hast noch kein eigenes Auto.<br><small>Kauf eins im 🚘 Autohaus!</small></span><b><button data-act="route-dealer" style="background:#ffb703;color:#111;border:0;border-radius:8px;padding:5px 9px;font-weight:800;cursor:pointer">📍 Route</button></b></li>')+'</ul>';pview.classList.add('show')}
+function towCar(oid){const r=OWNED.find(o=>o.oid===oid);if(!r)return;if(player.money<300&&!cheats.money){toast('❌ Zu wenig Geld ($300)');return}if(!cheats.money)player.money-=300;
+  let c=r.car;if(!c||c.wrecked||!cars.includes(c)){if(c)c.gone=true;c=spawnOwned(r,{x:player.x,y:player.y,a:0})}c.hp=c.maxhp;c.burning=false;c.fireT=0;c.dents=[];c.brokenHead=c.brokenTail=false;c.dmgVer=0;c.mesh=null;
+  r.home=null;r.g=false;placeNear(c);toast('🚚 Dein '+carName(c.type)+' ist da!');closePhone()}
+// Immobilien-App
+function immoList(){const grp=[['🏙️ Altstadt & Markt',h=>h.zone==='markt'||h.zone==='old'],['🏘️ Weststadt & Vororte',h=>h.zone==='west'||h.zone==='sub'],['🌵 Dünendorf (Wüste)',h=>h.desert]];
+  let html='<h3>🏠 Immobilien <span class="back" data-a="back">✕</span></h3><div style="font-size:12px;line-height:1.4;margin-bottom:6px">Dein Geld: <b>'+fmt$(player.money)+'</b> · Häuser: '+HOMES.filter(h=>h.owned).length+'/8<br><small style="opacity:.7">Kaufen geht hier oder direkt an der Haustür (E). Eigene Häuser: schlafen = speichern, Auto davor/in der Garage = gespeichert.</small></div>';
+  for(const [title,f] of grp){const L=HOMES.filter(h=>f(h)&&!h.nosale).sort((a,b)=>(b.owned-a.owned)||(a.price-b.price));if(!L.length)continue;html+='<div style="padding:10px 0 2px;font-weight:800;font-size:12px;opacity:.8">'+title+'</div><ul>';
+    for(const h of L){html+='<li><span><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700;font-size:13px">'+(h.owned?'🏠 ':'🏷️ ')+h.name+(h.gar?' 🚗':'')+'</div><small style="opacity:.7;font-size:11px">'+(h.owned?'Dein Haus':fmt$(h.price))+' · '+Math.round(hyp(h.door.x-player.x,h.door.y-player.y)/8)+' m</small></span><b style="display:flex;gap:4px;flex:none"><button data-act="route" data-h="'+h.id+'" style="background:#3a86ff;color:#fff;border:0;border-radius:8px;padding:5px 6px;font-size:12px;cursor:pointer">📍</button>'+(h.owned?'':'<button data-act="buy" data-h="'+h.id+'" style="background:#2b9348;color:#fff;border:0;border-radius:8px;padding:5px 7px;font-size:12px;font-weight:800;cursor:pointer">🛒</button>')+'</b></li>'}html+='</ul>'}
+  pview.innerHTML=html;pview.classList.add('show')}
+function dealerList(){pview.innerHTML='<h3>🚘 Autohaus <span class="back" data-a="back">✕</span></h3><div style="font-size:12px;line-height:1.4;margin-bottom:6px">Gekaufte Autos gehören dir: Abschleppdienst holt sie, bei deinem Haus geparkt sind sie gespeichert.</div><ul>'+DEALER.map(([t,n,p,d])=>'<li><span><div style="font-weight:700;font-size:13px">🏎️ '+n+'</div><small style="opacity:.7;font-size:11px">'+d+'</small></span><b style="flex:none">'+fmt$(p)+'</b></li>').join('')+'</ul><div style="padding:8px 0"><button data-act="route-dealer" style="width:100%;background:#ffb703;color:#111;border:0;border-radius:10px;padding:9px;font-weight:800;cursor:pointer">📍 Route zum Autohaus</button></div>';pview.classList.add('show')}
+function openDealer(){const pc=player.car;const body='<div style="font-size:13px;line-height:1.5">Willkommen im Autohaus! Gekaufte Autos gehören dir ('+OWNED.length+'/'+OWNMAX+'). Farbe ist Zufall – umlackieren kannst du bei 🔧 Neon Customs.<br>Dein Geld: <b>'+fmt$(player.money)+'</b></div>';
+  openModal('🚘 AUTOHAUS NEON',body,DEALER.map(([t,n,p,d])=>({label:'🏎️ '+n+' – '+fmt$(p)+' <small style="opacity:.7">('+d+')</small>',fn:()=>buyCar(t,p)})).concat([{label:'Schließen',fn:closeModal}]))}
+function buyCar(type,price){if(OWNED.length>=OWNMAX){toast('❌ Du hast schon '+OWNMAX+' Autos – verkauf oder nutze den Abschleppdienst');return}if(!cheats.money&&player.money<price){toast('❌ Zu wenig Geld – du brauchst '+fmt$(price));return}
+  if(!cheats.money)player.money-=price;const sp=SPEC.dealer,P=sp.park;const c=makeCar(type,P.x,P.y,P.a||0);c.color=pick(CARCOLS);const r=ownCar(c);c.ctrl='none';
+  if(cars.some(o=>o!==c&&!o.display&&d2(o,P)<40))placeNear(c);else cars.push(c);sfx.buy();closeModal();showMBig('🚘 GEKAUFT!','Dein neuer '+carName(type)+' steht vor dem Autohaus',2400);saveGame()}
+phoneEl.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(!el)return;const act=el.dataset.act;sfx.phone();
+  if(act==='tow')towCar(+el.dataset.oid);else if(act==='route-dealer'){waypoint={x:MK.dealer.x,y:MK.dealer.y};routeT=0;closePhone();toast('📍 Route zum Autohaus gesetzt')}
+  else if(act==='route'){const h=homeById(+el.dataset.h);if(h){waypoint={x:h.door.x,y:h.door.y};routeT=0;closePhone();toast('📍 Route zu '+h.name+' gesetzt')}}
+  else if(act==='buy'){const h=homeById(+el.dataset.h);if(h&&buyHome(h)){closePhone()}else if(h)immoList()}});
 
 addFixed();for(let i=0;i<PEDCAP;i++)spawnPed(0);for(let i=0;i<CARCAP;i++)spawnTraffic(0);
 requestAnimationFrame(frame);
