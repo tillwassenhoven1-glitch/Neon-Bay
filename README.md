@@ -42,7 +42,7 @@ Keine Installation, kein Konto nötig – läuft auf Handy, iPad und PC. 🎮
 - 📱 Handy, 🎒 Inventar und 🗺️ große Karte mit GPS-Route
 - ⚙️ Menü mit Einstellungen: Steuerung, eigene Tastenbelegung, Grafik & Ton
 - 👤 **Spielstand-Code** zum Kopieren & Laden auf anderen Geräten, Konto-Login (Google/E-Mail) vorbereitet
-- 🌐 **Online-Multiplayer**: Raum erstellen, Code an Freunde schicken, zusammen bis zu 8 Spieler in derselben Stadt – alle sehen **denselben Verkehr**, dazu Namen über dem Kopf, Autos, Schüsse, PvP (an/aus) und Chat (Enter)
+- 🌐 **Online-Multiplayer**: Raum erstellen, Code an Freunde schicken, zusammen bis zu 8 Spieler in derselben Stadt – alle sehen **denselben Verkehr, dieselben Passanten und die Polizei** der anderen (inkl. Fahndungssterne auf der Karte), dazu Namen über dem Kopf, Autos, Schüsse, PvP (an/aus) und Chat (Enter)
 - 📲 Touch-Steuerung fürs Handy/iPad – oder Tastatur & Maus am PC
 
 ## Steuerung (PC)
