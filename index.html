@@ -502,7 +502,7 @@ function terrRaw(x,y){const d=cityD(x,y),m=landW(x,y)-d;if(m<-280)return -20;
   const mw=mtnW(x,y)*smoothT(clamp((d-850)/850,0,1)),pk=Math.exp(-(((x-PKX)/700)**2+((y-PKY)/760)**2))*470,
     rg=170+Math.sin(x*.0047+y*.0031)*95+Math.sin(x*.011+1)*Math.cos(y*.009)*60+Math.exp(-(((x-WORLD-700)/520)**2+((y+1500)/520)**2))*300+Math.exp(-(((x-1800)/600)**2+((y+1900)/450)**2))*240+Math.exp(-(((x-PKX+300)/420)**2+((y-PKY-1150)/380)**2))*160+Math.exp(-(((x-PKX-200)/400)**2+((y-PKY+1250)/380)**2))*180;
   const dz=desertW(x,y),dune=dz*(10+Math.sin(x*.0021+.4)*8+Math.sin(y*.0031)*6+Math.sin(x*.011)*Math.sin(y*.013)*4);
-  let h=-.4+hill+mw*(rg+pk)+dune*near;const e=clamp(m/240,0,1);{const cd=Math.hypot(x-PKX-130,y-PKY-60),w=1-smoothT((cd-260)/520);if(w>0&&h>548)h=lerp(h,548+(h-548)*.12,w)}{const vx=x-6688,vy=y-731,pr=-vx*.932+vy*.363,lt=Math.abs(-vx*.363-vy*.932);if(pr>60){const lim=548*(1-pr/1950)-24-Math.min(90,(pr-60)*.9),wl=1-smoothT((lt-(100+pr*.32))/(170+pr*.2));if(wl>0&&h>lim)h=lerp(h,lim,wl)}}return e*h-(1-e)*8}
+  let h=-.4+hill+mw*(rg+pk)+dune*near;const e=clamp(m/240,0,1);{const cd=Math.hypot(x-PKX-130,y-PKY-60),w=1-smoothT((cd-260)/520);if(w>0&&h>548)h=lerp(h,548+(h-548)*.12,w)}{const vx=x-6688,vy=y-731,pr=-vx*.932+vy*.363,lt=Math.abs(-vx*.363-vy*.932);if(pr>60&&pr<1700){const lim=Math.max(30,548*(1-pr/1950)-24-Math.min(90,(pr-60)*.9)),wl=(1-smoothT((lt-(100+pr*.32))/(170+pr*.2)))*(1-smoothT((pr-1150)/500));if(wl>0&&h>lim)h=lerp(h,lim,wl)}}return e*h-(1-e)*8}
 function inCity(x,y){return x>=0&&y>=0&&x<=WORLD&&y<=WORLD}
 // ---- road paths ----
 function catmull(P,closed,seg){const out=[],n=P.length,g=i=>closed?P[(i+n)%n]:P[clamp(i,0,n-1)],m=closed?n:n-1;
@@ -1410,13 +1410,13 @@ function addFixed(){for(const q of PIERS){const horiz=q.w>q.h;for(const s of [-1
     const a=horiz?(q.x<0?Math.PI:0):(q.y<0?-Math.PI/2:Math.PI/2);const b=makeCar('boat',x,y,a);b.fixed=true;b.color=pick(['#f5f5f5','#ffd23f','#ff4d6d','#4ea8ff']);cars.push(b)}}
   const t=makeCar('taxi',TAXIB.x+B/2+40,roadC(3)-48,0);t.fixed=true;cars.push(t);const ft=makeCar('fire',FIREB.x+B/2,roadC(3)-48,0);ft.fixed=true;ft.color='#c1121f';cars.push(ft);
   const bk=makeCar('bike',SAFEB.x+B/2+40,roadC(7)-48,0);bk.fixed=true;bk.color='#ff2e88';cars.push(bk)}
-function keepCar(c){if(c.gone)return false;if(c.net)return true;const d=d2(c,player);if(c===player.car||(player.entering&&player.entering.car===c))return true;if(c.type==='boat'&&c.fixed)return true;if(c.racer)return true;
+function keepCar(c){if(c.gone)return false;if(c.net)return true;const d=MP.on?mpD(c):d2(c,player);if(c===player.car||(player.entering&&player.entering.car===c))return true;if(c.type==='boat'&&c.fixed)return true;if(c.racer)return true;
   if(c.mine)return !c.wrecked||d<1600;if(c.fixed)return d<2600;if(c.ctrl==='cop'&&!c.leave)return d<2400;if(c.leave)return d<offR()+150;if(c.siren&&stars>0)return d<1800;return d<1600}
 function populate(){peds=peds.filter(p=>!p.dead&&(p.fare||(p.clerk&&p.state==='clerk'&&d2(p,player)<2200)||d2(p,player)<1450));cars=cars.filter(keepCar);
   cops=cops.filter(p=>!p.dead&&d2(p,player)<1450&&!(stars===0&&d2(p,player)>offR()+60));pickups=pickups.filter(p=>p.t<45&&d2(p,player)<1600);
   rackTick();const pc=peds.length;if(pc<PEDCAP){spawnPed(offR()*.8);if(pc<PEDCAP-12)spawnPed(offR()*.8)}
-  spawnHwy();fenceRestore();
-  const tc=cars.filter(c=>!c.siren&&!c.fixed&&!c.racer&&!c.hwy&&!c.rackOf&&!c.ownBike).length;if(tc<CARCAP){spawnTraffic(offR()*.8);if(tc<CARCAP-8)spawnTraffic(offR()*.8)}}
+  fenceRestore();if(MP.on&&!MP.host)return;spawnHwy();
+  const tc=cars.filter(c=>!c.siren&&!c.fixed&&!c.racer&&!c.hwy&&!c.rackOf&&!c.ownBike&&!c.net&&mpD(c)<1400&&d2(c,player)<1400).length;if(tc<CARCAP){spawnTraffic(offR()*.8);if(tc<CARCAP-8)spawnTraffic(offR()*.8)}if(MP.on)mpPopulate()}
 function spawnClerks(){for(const st of STORES){const ck=st.clerk;if(ck&&(ck.dead||!peds.includes(ck)||(ck.state!=='clerk'&&d2(ck,player)>600)))st.clerk=null;
   if(!st.clerk&&hyp(st.x-player.x,st.clerkY-player.y)<1300){const q=makePed(st.x,st.clerkY);q.state='clerk';q.clerk=true;q.a=Math.PI/2;q.shirt='#2a9d8f';q.long=true;q.money=ri(40,120);peds.push(q);st.clerk=q}}}
 
@@ -1578,9 +1578,9 @@ function updateHeli(dt){if(!heli)return;const h=heli;let tx,ty;
   if(h.leave&&d2(h,player)>offR()+500)heli=null}
 
 // ================= PLAYER =================
-function nearestCar(){let best=null,bd=58;for(const c of cars){if(c.wrecked||c.net)continue;const d=d2(c,player);if(d<bd){bd=d;best=c}}return best}
+function nearestCar(){let best=null,bd=58;for(const c of cars){if(c.wrecked||(c.net&&!c.shared))continue;const d=d2(c,player);if(d<bd){bd=d;best=c}}return best}
 function nearestPed(r){let best=null,bd=r;for(const q of peds){if(q.state==='ko'||q.state==='down'||q.state==='hands'||q.fare||q.clerk)continue;const d=d2(q,player);if(d<bd){bd=d;best=q}}return best}
-function enterCar(c){const p=player;
+function enterCar(c){const p=player;if(c.shared)mpTake(c);
   if(c.ctrl==='ai'){c.ctrl='none';c.vx=Math.cos(c.a)*c.speed*.25;c.vy=Math.sin(c.a)*c.speed*.25;const dp=doorPos(c);
     if(c.police){c.crew=2;exitCrew(c);c.siren=true;crime(2,0)}
     else{const q=makePed(dp.x,dp.y);q.state='down';q.timer=1.2;q.vx=Math.sin(c.a)*180;q.vy=-Math.cos(c.a)*180;q.a=Math.atan2(q.vy,q.vx);peds.push(q);crime(1,.2)}}
@@ -1592,7 +1592,7 @@ function landPoint(c){let best=null,bd=85;const cand=[{x:clamp(c.x,-64,WORLD+64)
 function exitCar(force){const p=player,c=p.car;if(!c)return false;if(!force&&c.elev&&(c.elevH||0)>4){toast('🚫 Auf der Hochstraße kannst du nicht aussteigen');return false}let pos=doorPos(c);
   if(c.type==='boat'){pos=landPoint(c)||doorPos(c)}
   const sp=hyp(c.vx,c.vy);p.car=null;p.x=pos.x;p.y=pos.y;p.z=c.z||0;p.vz=0;if(c.type!=='boat'){collide(p,8,true);if(!walkable(p.x,p.y)&&!c.sink){p.x=clamp(p.x,-20,WORLD+20);p.y=clamp(p.y,-20,WORLD+20)}}
-  p.vx=c.type==='boat'?0:c.vx*.6;p.vy=c.type==='boat'?0:c.vy*.6;p.a=c.a;c.ctrl='none';sfx.door();
+  p.vx=c.type==='boat'?0:c.vx*.6;p.vy=c.type==='boat'?0:c.vy*.6;p.a=c.a;c.ctrl='none';sfx.door();if(MP.on&&!MP.host&&!c.mine&&!c.ownBike&&!c.rackOf&&c.type!=='boat')mpGive(c);
   if(!force&&sp>170&&c.type!=='boat'){hurt(clamp(sp*.03,5,25));toast('🤸 Aus dem fahrenden Fahrzeug gesprungen!')}return true}
 function autoAim(a){let best=null,bs=1e9;for(const q of cops.concat(peds)){if(q.state==='ko')continue;const dx=q.x-player.x,dy=q.y-player.y,d=hyp(dx,dy);if(d>480||d<1)continue;
   const da=Math.abs(angDiff(a,Math.atan2(dy,dx)));if(da>.45)continue;const s=d*(1+da*3)*(q.cop?.6:1);if(s<bs){bs=s;best=q}}return best}
@@ -2035,7 +2035,7 @@ function update(dt){if(state==='play'&&!update.vp&&Math.hypot(player.x-VIEWP.x,p
   updateHeli(dt);updateGrenades(dt);
   for(const b of bullets){b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;if(inBuilding(b.x,b.y)){b.life=0;spark(b.x,b.y,b.z);continue}
     if(b.from==='p'){for(const q of peds.concat(cops)){if(q.state==='ko')continue;if(hyp(q.x-b.x,q.y-b.y)<10){b.life=0;knock(q,b.vx*.2,b.vy*.2,b.dmg||18,true);spark(b.x,b.y,14);break}}
-      if(b.life>0&&MP.on)mpBulletHit(b);if(b.life<=0)continue;for(const c of cars){if(c===player.car||c.wrecked)continue;if(circles(c).some(s=>hyp(s.x-b.x,s.y-b.y)<s.r)){b.life=0;damageCar(c,9);spark(b.x,b.y,8);if(c.ctrl==='ai'){c.ctrl='none';c.vx=Math.cos(c.a)*c.speed*.3;c.vy=Math.sin(c.a)*c.speed*.3;c.ejectT=.3}if(c.police&&!c.net)crime(2,.15);break}}
+      if(b.life>0&&MP.on)mpBulletHit(b);if(b.life<=0)continue;for(const c of cars){if(c===player.car||c.wrecked)continue;if(circles(c).some(s=>hyp(s.x-b.x,s.y-b.y)<s.r)){b.life=0;if(c.shared)mpCarDmg(c,9);damageCar(c,9);spark(b.x,b.y,8);if(c.ctrl==='ai'){c.ctrl='none';c.vx=Math.cos(c.a)*c.speed*.3;c.vy=Math.sin(c.a)*c.speed*.3;c.ejectT=.3}if(c.police&&!c.net)crime(2,.15);break}}
       if(b.life>0&&heli&&hyp(heli.x-b.x,heli.y-b.y)<36){b.life=0;heli.hp-=7;spark(heli.x,heli.y,heli.z);if(heli.hp<=0){explode(heli.x,heli.y,heli.z);heli=null;crime(0,1);toast('🚁 Hubschrauber abgeschossen!')}}}
     else if(b.from!=='netc'&&state==='play'&&!player.entering){const nb=b.from==='net';if(player.car){if(hyp(b.x-player.x,b.y-player.y)<24){b.life=0;if(nb){MP.lastBy=b.by;MP.lastByT=now}damageCar(player.car,nb?b.dmg*.5:2.5);hurt(.8);spark(b.x,b.y,10)}}
       else if(hyp(b.x-player.x,b.y-player.y)<11){b.life=0;if(nb){MP.lastBy=b.by;MP.lastByT=now}hurt(nb?b.dmg*.6:4);spark(b.x,b.y,14)}}}
@@ -2252,7 +2252,7 @@ function render3D(rdt){frameId++;const nf=lighting();updateCamera(rdt);
   for(const c of cars){if(!vis(c))continue;if(!c.mesh)c.mesh=buildCar(c);track(c.mesh);animCar(c,c.mesh)}
   for(const p of peds.concat(cops)){if(!vis(p))continue;if(!p.mesh)p.mesh=buildPed(p);track(p.mesh);animPed(p,p.mesh)}
   if(state!=='start'&&!player.car){if(!player.mesh)player.mesh=buildPed(player);track(player.mesh);animPed(player,player.mesh)}
-  if(MP.on)mpFrame(rdt);
+  if(MP.on){if(!MP.host)mpTrafficFrame();mpFrame(rdt)}
   for(const m of pickups){if(!m.mesh){m.mesh=new THREE.Group();box(M3.cash,9,1.4,5,0,0,0,m.mesh);box('#e8f5e9',2,1.6,2,0,0,0,m.mesh)}track(m.mesh);m.mesh.position.set(m.x,groundH(m.x,m.y)+5+Math.sin(now*4+m.x)*1.5,m.y);m.mesh.rotation.y=now*2}
   for(const g of grenades){if(!g.mesh){g.mesh=new THREE.Mesh(G.sph,mat('#3d5a2a'));g.mesh.scale.setScalar(1.6)}track(g.mesh);g.mesh.position.set(g.x,g.z,g.y)}
   if(heli){if(!heli.mesh)heli.mesh=buildHeli();track(heli.mesh);const u=heli.mesh.userData.u;heli.mesh.position.set(heli.x,heli.z+Math.sin(now*1.3)*3,heli.y);heli.mesh.rotation.y=-heli.a;heli.mesh.rotation.z=-.08;
@@ -2671,7 +2671,7 @@ const resKey=c=>c.g.e.id+':'+c.g.fwd+':'+(c.g.e.lanes===2?c.g.lane:0);
 for(const n of NET.nodes){const es=n.edges.filter(e=>!e.ext);n.ai=es.filter(e=>!e.deadEnd);if(es.length<3){n.sig=false;continue}
   n.grp={};let ax=null;for(const e of es){const nb=e.a===n?e.pts[Math.min(3,e.pts.length-1)]:e.pts[Math.max(0,e.pts.length-4)],ang=Math.atan2(nb.y-n.y,nb.x-n.x);if(ax==null)ax=ang;const d=Math.abs(angDiff(ax,ang));n.grp[e.id]=(d<Math.PI/4||d>Math.PI*3/4)?0:1}
   n.off=(n.id*3.7)%15;if(!n.sig){const mx=Math.max(...es.map(rankE));n.stopE=new Set(es.filter(e=>rankE(e)<mx&&!e.deadEnd).map(e=>e.id))}}
-function lightState(n,grp){const t=((now+n.off)%15+15)%15;if(grp===0)return t<6?'g':t<7.5?'y':'r';return t<7.5?'r':t<13.5?'g':'y'}
+function lightState(n,grp){const t=((now+(globalThis.__mpLOff||0)+n.off)%15+15)%15;if(grp===0)return t<6?'g':t<7.5?'y':'r';return t<7.5?'r':t<13.5?'g':'y'}
 // ---- Verkehrs-KI auf dem Straßennetz ----
 const laneOff=(e,l)=>e.lanes===2?(l?40:14):e.hw*.56;
 function travelPos(e,fwd,sT,off){const p=ePos(e,fwd?sT:e.len-sT),sg=fwd?1:-1,hx=p.tx*sg,hy=p.ty*sg;return{x:p.x-hy*off,y:p.y+hx*off,a:Math.atan2(hy,hx),hx,hy}}
@@ -2901,7 +2901,7 @@ try{const b=document.createElement('button');b.textContent='🎵 Musik';b.onclic
   if(isTouch){const t=document.createElement('button');t.className='ts';t.textContent='🎵';t.onclick=e=>{e.stopPropagation();initAudio();openMusic()};const tt=$('ttop');if(tt)tt.appendChild(t)}}catch(e){}
 
 // ===== MULTIPLAYER (PeerJS, Raum-Code, bis 8 Spieler) =====
-const MP={on:false,host:false,code:'',peer:null,conns:new Map(),hostConn:null,myId:'',players:new Map(),pvp:true,max:8,lastBy:null,lastByT:0,deadSent:false,sendI:null,chat:[],hitCd:{},col:'#ffd23f'};
+const MP={on:false,host:false,code:'',peer:null,conns:new Map(),hostConn:null,myId:'',players:new Map(),pvp:true,max:8,lastBy:null,lastByT:0,deadSent:false,sendI:null,chat:[],hitCd:{},col:'#ffd23f',tc:new Map(),nid:0,lOff:0};
 const MPCOLS=['#ffd23f','#18d6ff','#ff2e88','#7cfc5a','#ff8c1a','#b388ff','#ff5252','#40e0d0'];
 function mpName(){try{return (localStorage.getItem('neonbay_name')||'').trim().slice(0,16)||'Spieler'+Math.floor(Math.random()*900+100)}catch(e){return 'Spieler'}}
 function mpSetName(n){try{localStorage.setItem('neonbay_name',n)}catch(e){}}
@@ -2924,7 +2924,7 @@ async function mpJoin(code){code=(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'
     c.on('data',d=>{let m;try{m=JSON.parse(d)}catch(e){return}mpHandle(m,c)});c.on('close',()=>{if(MP.on){mpChat('🌐','Verbindung zum Raum beendet');mpStop()}})});
   peer.on('error',e=>{mpStatus('❌ '+(e.type==='peer-unavailable'?'Raum '+code+' nicht gefunden':'Fehler: '+(e.type||e)));try{peer.destroy()}catch(er){}})}
 function mpStart(){clearInterval(MP.sendI);MP.sendI=setInterval(mpSendState,100);mpBadge();if(MP.host)MP.timeI=setInterval(()=>mpSend({t:'tm',gm:gameMin,pvp:MP.pvp}),4000)}
-function mpStop(){clearInterval(MP.sendI);clearInterval(MP.timeI);for(const [id] of MP.players)mpDrop(id);MP.players.clear();for(const [,c] of MP.conns)try{c.close()}catch(e){}MP.conns.clear();
+function mpStop(){clearInterval(MP.sendI);globalThis.__mpLOff=0;MP.lOff=0;for(const [,t] of MP.tc)t.c.gone=true;MP.tc.clear();clearInterval(MP.timeI);for(const [id] of MP.players)mpDrop(id);MP.players.clear();for(const [,c] of MP.conns)try{c.close()}catch(e){}MP.conns.clear();
   try{if(MP.hostConn)MP.hostConn.close()}catch(e){}try{if(MP.peer)MP.peer.destroy()}catch(e){}Object.assign(MP,{on:false,host:false,code:'',peer:null,hostConn:null});mpBadge()}
 function mpLeft(id){if(!MP.conns.has(id))return;MP.conns.delete(id);const rp=MP.players.get(id);if(rp)mpChat('🌐',rp.n+' hat den Raum verlassen');mpDrop(id);mpSendAll({t:'left',id})}
 function mpDrop(id){const rp=MP.players.get(id);if(!rp)return;if(rp.car)rp.car.gone=true;MP.players.delete(id);mpBadge()}
@@ -2936,7 +2936,7 @@ function mpHandle(m,c){
     case 'hi':{const col=MPCOLS[(MP.conns.size)%MPCOLS.length];const rp=mpPlayer(m.id,m.n,m.look,col);
       const list=[{id:MP.myId,n:mpName(),look:player.look||null,col:MP.col}];for(const [id,q] of MP.players)if(id!==m.id)list.push({id,n:q.n,look:q.av.look,col:q.col});
       c.send(JSON.stringify({t:'wel',you:m.id,col,players:list,gm:gameMin,pvp:MP.pvp}));mpSendAll({t:'join',id:m.id,n:m.n,look:m.look,col},m.id);mpChat('🌐',rp.n+' ist beigetreten');openOnlineRefresh();break}
-    case 'wel':MP.col=m.col;for(const q of m.players)mpPlayer(q.id,q.n,q.look,q.col);gameMin=m.gm;MP.pvp=m.pvp;mpChat('🌐','Du bist im Raum '+MP.code+' ('+(m.players.length+1)+' Spieler)');openOnlineRefresh();break;
+    case 'wel':MP.col=m.col;mpClearLocalTraffic();for(const q of m.players)mpPlayer(q.id,q.n,q.look,q.col);gameMin=m.gm;MP.pvp=m.pvp;mpChat('🌐','Du bist im Raum '+MP.code+' ('+(m.players.length+1)+' Spieler)');openOnlineRefresh();break;
     case 'join':if(m.id!==MP.myId){mpPlayer(m.id,m.n,m.look,m.col);mpChat('🌐',m.n+' ist beigetreten');openOnlineRefresh()}break;
     case 'left':{const rp=MP.players.get(m.id);if(rp)mpChat('🌐',rp.n+' hat den Raum verlassen');mpDrop(m.id);openOnlineRefresh();break}
     case 'full':mpStatus('❌ Raum ist voll (max. '+MP.max+')');mpStop();break;
@@ -2947,12 +2947,16 @@ function mpHandle(m,c){
     case 'hit':if(m.to===MP.myId)mpGotHit(m);break;
     case 'ko':mpKo(m);break;
     case 'ch':{const rp=MP.players.get(m.id);mpChat(rp?rp.n:'?',m.txt,rp&&rp.col);break}
+    case 'tr':if(!MP.host)mpTrafficIn(m);break;
+    case 'give':if(MP.host){const c=m.ty==='bicycle'?makeBicycle(m.mo||'city',m.x,m.y,m.a,m.col):makeCar(m.ty,m.x,m.y,m.a);c.color=m.col;if(m.md)c.mods=m.md;c.ctrl='none';c.vx=m.vx;c.vy=m.vy;c.hp=Math.min(c.maxhp,m.hp);if(m.wr){c.wrecked=true;c.hp=0}cars.push(c)}break;
+    case 'take':if(MP.host){const c=cars.find(o=>o.nid===m.nid&&!o.net);if(c)c.gone=true}break;
+    case 'cd':if(MP.host){const c=cars.find(o=>o.nid===m.nid&&!o.net);if(c){damageCar(c,m.dmg);if(c.ctrl==='ai'){c.ctrl='none';c.vx=Math.cos(c.a)*c.speed*.3;c.vy=Math.sin(c.a)*c.speed*.3}}}break;
     case 'pvp':MP.pvp=m.on;mpChat('🌐','PvP ist jetzt '+(m.on?'AN':'AUS'));break}}
 function mpKo(m){const v=MP.players.get(m.id),me=m.id===MP.myId,vn=me?'Du':v?v.n:'?',kn=m.by?(m.by===MP.myId?'dir':(MP.players.get(m.by)||{}).n):null;
   mpChat('💀',kn?vn+(me?' wurdest':' wurde')+' von '+kn+' erledigt':vn+(me?' bist':' ist')+' gestorben');if(m.by===MP.myId&&!me)toast('💀 Du hast '+vn+' erledigt!')}
 function mpSendState(){if(!MP.on)return;const p=player,c=p.car;const m={t:'st',n:mpName(),x:Math.round(p.x),y:Math.round(p.y),z:Math.round((p.z||0)*10)/10,a:Math.round(p.a*100)/100,mv:Math.round((p.move||0)*100)/100,w:p.weapon,ai:p.aimT>0?1:0,sw:p.swim&&!p.air?1:0,dn:state==='wasted'?1:0,pu:p.punchT>0?1:0};
-  if(c){m.v={ty:c.type,col:c.color,x:Math.round(c.x),y:Math.round(c.y),z:Math.round((c.z||0)*10)/10,a:Math.round(c.a*100)/100,vx:Math.round(c.vx),vy:Math.round(c.vy),sp:Math.round(c.speed||0),s1:c.siren?1:0,s2:c.siren2?1:0,wr:c.wrecked?1:0,bu:c.burning?1:0,md:c.mods||null}}
-  if(MP.host){m.id=MP.myId;mpSendAll(m)}else mpSend(m);
+  if(c){m.v={ty:c.type,col:c.color,x:Math.round(c.x),y:Math.round(c.y),z:Math.round((c.z||0)*10)/10,a:Math.round(c.a*100)/100,vx:Math.round(c.vx),vy:Math.round(c.vy),sp:Math.round(c.speed||0),s1:c.siren?1:0,s2:c.siren2?1:0,wr:c.wrecked?1:0,bu:c.burning?1:0,md:c.mods||null,mo:c.model||undefined}}
+  if(MP.host){m.id=MP.myId;mpSendAll(m);mpTrafficOut()}else mpSend(m);
   if(state==='wasted'&&!MP.deadSent){MP.deadSent=true;const by=now-MP.lastByT<6?MP.lastBy:null;mpSend({t:'ko',by});mpKo({id:MP.myId,by})}
   if(state==='play')MP.deadSent=false}
 function mpRemoteShot(m){if(state==='start')return;const d=hyp(m.x-player.x,m.y-player.y);if(d>1600)return;const W=WPN[m.w]||WPN.pistol;
@@ -2978,7 +2982,7 @@ function mpSample(rp){const B=rp.buf;if(!B.length)return null;const t=performanc
 function mpFrame(rdt){if(!MP.on)return;const tn=performance.now();
   for(const [id,rp] of MP.players){if(rp.last&&tn-rp.last>12000){if(MP.host)mpLeft(id);else mpDrop(id);continue}const s=mpSample(rp);if(!s)continue;const q=rp.av;
     q.dn=!!s.dn;q.weapon=s.w||'fist';q.aimT=s.ai?.5:0;q.punchT=s.pu?.2:0;q.punchArm=1;q.swim=!!s.sw;q.state=s.dn?'down':'walk';q.fallT=1;
-    if(s.v){const v=s.v;rp.inCar=true;if(!rp.car||rp.car.gone||rp.car.type!==v.ty||rp.car.color!==v.col||!cars.includes(rp.car)){if(rp.car)rp.car.gone=true;const c=makeCar(v.ty,v.x,v.y,v.a);c.ctrl='net';c.net=rp;c.color=v.col;c.mods=v.md||null;c.mesh=null;cars.push(c);rp.car=c}
+    if(s.v){const v=s.v;rp.inCar=true;if(!rp.car||rp.car.gone||rp.car.type!==v.ty||rp.car.color!==v.col||!cars.includes(rp.car)){if(rp.car)rp.car.gone=true;const c=v.ty==='bicycle'?makeBicycle(v.mo||'city',v.x,v.y,v.a,v.col):makeCar(v.ty,v.x,v.y,v.a);c.ctrl='net';c.net=rp;c.color=v.col;c.mods=v.md||null;c.mesh=null;cars.push(c);rp.car=c}
       const c=rp.car;c.x=v.x;c.y=v.y;c.z=v.z||0;c.a=v.a;c.vx=v.vx;c.vy=v.vy;c.speed=v.sp;c.siren=!!v.s1;c.siren2=!!v.s2;if(v.wr&&!c.wrecked){c.wrecked=true;c.hp=0}if(v.bu)c.burning=true;q.x=v.x;q.y=v.y;q.a=v.a}
     else{rp.inCar=false;if(rp.car){rp.car.gone=true;rp.car=null}const dx=s.x-q.x,dy=s.y-q.y;q.move=Math.min(1,s.mv||0);q.anim+=rdt*(6+8*q.move)*(q.move>.05?1:0);q.x=s.x;q.y=s.y;q.z=s.z;q.a=s.a;
       if(hyp(q.x-cam.x,q.y-cam.y)<1500){if(!rp.mesh){rp.mesh=buildPed(q);rp.tag=null}if(!rp.tag){rp.tag=mpTag(rp);rp.tag.position.set(0,28,0);rp.mesh.add(rp.tag)}track(rp.mesh);animPed(q,rp.mesh);if(q.swim)rp.mesh.position.y=-22}}}
@@ -3013,6 +3017,34 @@ window.addEventListener('beforeunload',()=>{try{if(MP.on)mpStop()}catch(e){}});
 try{const b=document.createElement('button');b.textContent='🌐 Online';b.onclick=()=>{initAudio();openOnline()};$('dtop').appendChild(b);
   if(isTouch){const t=document.createElement('button');t.className='ts';t.textContent='🌐';t.onclick=e=>{e.stopPropagation();initAudio();openOnline()};const tt=$('ttop');if(tt)tt.appendChild(t)}
   const s=document.createElement('button');s.className='btn alt';s.textContent='🌐 ONLINE MIT FREUNDEN';s.onclick=()=>{const cb=$('contBtn');if(cb&&cb.style.display!=='none')startGame(true);else startGame(false);setTimeout(openOnline,250)};$('contBtn').after(s)}catch(e){}
+
+// --- Gemeinsamer Verkehr: der Host simuliert, alle sehen dieselben Autos ---
+function mpCenters(){const L=[];for(const [,rp] of MP.players)L.push(rp.av);return L}
+function mpD(c){let d=d2(c,player);if(MP.on&&MP.host)for(const [,rp] of MP.players){const e=hyp(c.x-rp.av.x,c.y-rp.av.y);if(e<d)d=e}return d}
+function mpPopulate(){if(!(MP.on&&MP.host))return;const ox=player.x,oy=player.y,mr=offR()*.8;
+  for(const q of mpCenters()){if(hyp(q.x-ox,q.y-oy)<900)continue;let n=0;for(const c of cars)if(c.ctrl==='ai'&&!c.hwy&&hyp(c.x-q.x,c.y-q.y)<1350)n++;if(n>=CARCAP)continue;
+    const before=cars.length;player.x=q.x;player.y=q.y;try{spawnTraffic(mr);spawnHwy()}catch(e){}player.x=ox;player.y=oy;
+    for(let i=cars.length-1;i>=before;i--){const c=cars[i];if(hyp(c.x-ox,c.y-oy)<mr)cars.splice(i,1)}}}
+function mpShareable(c){return !c.net&&!c.gone&&c!==player.car&&!(player.entering&&player.entering.car===c)&&!c.fixed&&!c.rackOf&&!c.ownBike&&c.type!=='boat'&&(c.ctrl==='ai'||c.ctrl==='cop'||c.ctrl==='none')}
+function mpTrafficOut(){if(!MP.conns.size)return;const sh=cars.filter(mpShareable);for(const c of sh)if(!c.nid)c.nid=++MP.nid;
+  for(const [id,conn] of MP.conns){if(!conn.open)continue;const rp=MP.players.get(id);if(!rp)continue;conn.known=conn.known||new Set();const C=[],D=[];
+    for(const c of sh){if(Math.abs(c.x-rp.av.x)>1500||Math.abs(c.y-rp.av.y)>1500)continue;
+      const fl=(c.siren?1:0)|(c.siren2?2:0)|(c.wrecked?4:0)|(c.burning?8:0);C.push([c.nid,Math.round(c.x),Math.round(c.y),Math.round(c.a*100),Math.round(c.speed||hyp(c.vx,c.vy)),fl,Math.round((c.z||0)*10)/10]);
+      if(!conn.known.has(c.nid)){conn.known.add(c.nid);D.push([c.nid,c.type,c.color,c.model||0,c.mods||0])}}
+    try{conn.send(JSON.stringify({t:'tr',hn:now,c:C,d:D}))}catch(e){}}}
+function mpTrafficIn(m){const rt=performance.now()/1000,off=m.hn-now;MP.lOff=Math.abs(off-MP.lOff)>2?off:lerp(MP.lOff,off,.2);globalThis.__mpLOff=MP.lOff;
+  for(const d of m.d){if(MP.tc.has(d[0]))continue;const c=d[1]==='bicycle'?makeBicycle(d[3]||'city',0,0,0,d[2]):makeCar(d[1],0,0,0);c.color=d[2];if(d[4])c.mods=d[4];c.ctrl='net';c.net={shared:true};c.shared=true;c.nid=d[0];c.mesh=null;MP.tc.set(d[0],{c,buf:[],fresh:true})}
+  const seen=new Set();for(const a of m.c){const t=MP.tc.get(a[0]);if(!t)continue;seen.add(a[0]);t.buf.push({rt,x:a[1],y:a[2],a:a[3]/100,sp:a[4],fl:a[5],z:a[6]||0});if(t.buf.length>6)t.buf.shift();
+    if(t.fresh){t.fresh=false;Object.assign(t.c,{x:a[1],y:a[2],a:a[3]/100});cars.push(t.c)}}
+  for(const [nid,t] of MP.tc)if(!seen.has(nid)){t.c.gone=true;MP.tc.delete(nid)}}
+function mpTrafficFrame(){const t0=performance.now()/1000-.13;for(const [,t] of MP.tc){const B=t.buf;if(!B.length)continue;let a=B[0],b=B[B.length-1],k=1;
+    if(t0<b.rt){for(let i=0;i<B.length-1;i++)if(B[i].rt<=t0&&B[i+1].rt>=t0){a=B[i];b=B[i+1];break}k=t0<=a.rt?0:(t0-a.rt)/Math.max(.001,b.rt-a.rt)}
+    const c=t.c,x=a.x+(b.x-a.x)*k,y=a.y+(b.y-a.y)*k,an=a.a+angDiff(a.a,b.a)*k;c.vx=Math.cos(an)*b.sp;c.vy=Math.sin(an)*b.sp;c.x=x;c.y=y;c.a=an;c.speed=b.sp;c.z=b.z;
+    c.siren=!!(b.fl&1);c.siren2=!!(b.fl&2);if(b.fl&4&&!c.wrecked){c.wrecked=true;c.hp=0}if(b.fl&8)c.burning=true;if(!cars.includes(c))cars.push(c)}}
+function mpClearLocalTraffic(){for(const c of cars)if(c.ctrl==='ai'&&c!==player.car&&!c.mine)c.gone=true;cars=cars.filter(c=>!c.gone)}
+function mpTake(c){MP.tc.delete(c.nid);mpSend({t:'take',nid:c.nid});c.net=null;c.shared=false;c.ctrl=c.police?'none':'ai';c.nid=null}
+function mpCarDmg(c,dmg){if(c.shared)mpSend({t:'cd',nid:c.nid,dmg})}
+function mpGive(c){mpSend({t:'give',ty:c.type,col:c.color,mo:c.model,md:c.mods||null,x:Math.round(c.x),y:Math.round(c.y),a:c.a,vx:Math.round(c.vx),vy:Math.round(c.vy),hp:c.hp,wr:c.wrecked?1:0});setTimeout(()=>{if(player.car!==c){c.gone=true;cars=cars.filter(o=>o!==c)}},350)}
 
 addFixed();for(let i=0;i<PEDCAP;i++)spawnPed(0);for(let i=0;i<CARCAP;i++)spawnTraffic(0);
 requestAnimationFrame(frame);
