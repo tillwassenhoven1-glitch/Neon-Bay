@@ -325,7 +325,7 @@ body.ingarage #touch,body.ingarage #mmhit,body.ingarage #help,body.ingarage .pro
     <input id="cinput" class="cin" maxlength="9" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Code tippen…"><div class="kp2"><button id="cx">✕ Abbrechen</button><button id="cok">✔ OK</button></div><div id="cmsg"></div></div>
   <div id="clist" style="display:none"><h2>🎮 CHEAT-MENÜ</h2><div id="ctg"></div><button class="gbtn back" id="cclose" style="width:100%;margin-top:10px">Schließen</button></div>
 </div></div>
-<div id="start" class="overlay"><div id="ver" style="position:absolute;left:12px;bottom:10px;font:700 13px system-ui;color:rgba(255,255,255,.75);background:rgba(0,0,0,.35);padding:4px 10px;border-radius:8px">Version 0.3.8 · Open Beta</div>
+<div id="start" class="overlay"><div id="ver" style="position:absolute;left:12px;bottom:10px;font:700 13px system-ui;color:rgba(255,255,255,.75);background:rgba(0,0,0,.35);padding:4px 10px;border-radius:8px">Version 0.3.9 · Open Beta</div>
   <div class="box">
     <h1>NEON BAY</h1>
     <div class="sub">3D · OPEN WORLD · WANTED LEVEL</div>
@@ -1592,8 +1592,8 @@ function updateCar(c,dt){if(c.ctrl==='net')return;
   else if(c.hp<c.maxhp*.4&&R()<dt*(c.hp<c.maxhp*.2?16:6))smoke(c.x+Math.cos(c.a)*c.spec.L*.35,c.y+Math.sin(c.a)*c.spec.L*.35,c.hp<c.maxhp*.2,10);
   if(c.ejectT>0){c.ejectT-=dt;if(c.ejectT<=0)ejectDriver(c)}
   if(c.z==null)c.z=0;
-  if(c===player.car&&cheats.flyCar){c.vz=lerp(c.vz||0,(c.vzIn||0)*170,Math.min(1,dt*5));c.z=clamp(c.z+c.vz*dt,floorAt(c.x,c.y,c.z),800);if(c.vz<0&&c.z<=floorAt(c.x,c.y,c.z)+.01)c.vz=0}
-  else if(c.z>0){const fl=floorAt(c.x,c.y,c.z);if(c.z>fl+.5){c.vz=(c.vz||0)-520*dt;c.z+=c.vz*dt}if(c.z<=fl){if(c.vz<-260){damageCar(c,(-c.vz-260)*.12);carImpact(c,c.x+Math.cos(c.a)*12,c.y+Math.sin(c.a)*12,-c.vz*.6);if(c===player.car){shake=Math.max(shake,8);sfx.crash()}}c.z=fl;c.vz=0}}
+  if(c===player.car&&cheats.flyCar){c.vz=lerp(c.vz||0,(c.vzIn||0)*170,Math.min(1,dt*5));const gg=inCity(c.x,c.y)?0:carGround(c,c.x,c.y),fb=floorAt(c.x,c.y,c.z),fl=Math.max(fb,gg);if(c.z<gg&&c.vz>0)c.z=gg;c.z=clamp(c.z+c.vz*dt,fl,Math.max(800,gg+800));if(c.vz<0&&c.z<=fl+.01)c.vz=0;if(gg>0&&fb<=gg&&c.z<=gg+.5&&c.vz<=1){c.z=0;c.vz=Math.max(0,c.vz)}}
+  else if(c.z>0){const gg=inCity(c.x,c.y)?0:carGround(c,c.x,c.y),fb=floorAt(c.x,c.y,c.z),fl=Math.max(fb,gg);if(c.z>fl+.5){c.vz=(c.vz||0)-520*dt;c.z+=c.vz*dt}if(c.z<=fl+.5){if(c.vz<-260){damageCar(c,(-c.vz-260)*.12);carImpact(c,c.x+Math.cos(c.a)*12,c.y+Math.sin(c.a)*12,-c.vz*.6);if(c===player.car){shake=Math.max(shake,8);sfx.crash()}}c.z=fb>gg?fb:(gg>0?0:fl);c.vz=0}}
   if(c.ctrl==='ai'){if(c.hwy)hwyDrive(c,dt);else aiDrive(c,dt);return}
   c.px=c.x;c.py=c.y;
   if(c.ctrl==='player')physCar(c,player.inp.thr,player.inp.steer,player.inp.hb,dt);else if(c.ctrl==='cop')copDrive(c,dt);else if(c.ctrl==='race')raceDrive(c,dt);else physCar(c,0,0,false,dt);
@@ -1717,11 +1717,11 @@ function updatePlayer(dt){const p=player;p.hurtT=Math.max(0,p.hurtT-dt);p.fireT-
     if(tap('KeyT')){if(mission&&(mission.type==='taxi'||mission.type==='fire')&&mission.phase!=='get'){c.siren2=false;endMission(mission.type==='fire'?'Feuerwehr-Job beendet':'Taxi-Job beendet',false)}else if(c.type==='taxi'||c.type==='fire'){if(mission&&mission.phase!=='get')toast('Erst die aktuelle Mission beenden');else if(c.type==='taxi')startTaxi();else startFire()}}
     tap('Space');tap('Mouse');tap('KeyQ');return}
   // on foot (camera relative)
-  if(p.z==null)p.z=0;const fly=cheats.fly,fl=floorAt(p.x,p.y,p.z);
+  if(p.z==null)p.z=0;const fly=cheats.fly,fl=Math.max(floorAt(p.x,p.y,p.z),inCity(p.x,p.y)?0:groundH(p.x,p.y));
   let f=(up?1:0)-(dn?1:0),s=(rt?1:0)-(lf?1:0),mag=1;let sprint=keys.ShiftLeft||keys.ShiftRight;
   if(joy.active){f=-joy.y;s=joy.x;mag=hyp(f,s)}
-  if(fly){const vu=(keys.Space?1:0)-((keys.KeyC||keys.ControlLeft||(isTouch&&keys.KeyQ))?1:0);p.vz=lerp(p.vz||0,vu*200,Math.min(1,dt*6));p.z=clamp(p.z+p.vz*dt,fl,800);if(p.z<=fl&&p.vz<0)p.vz=0}
-  else if(p.z>fl+.5){p.vz=(p.vz||0)-560*dt;p.z+=p.vz*dt;if(p.z<=fl){if(p.vz<-420&&walkable(p.x,p.y))hurt((-p.vz-420)*.12);p.z=fl;p.vz=0}}else{p.z=fl;p.vz=0}
+  if(fly){const vu=(keys.Space?1:0)-((keys.KeyC||keys.ControlLeft||(isTouch&&keys.KeyQ))?1:0);p.vz=lerp(p.vz||0,vu*200,Math.min(1,dt*6));p.z=clamp(p.z+p.vz*dt,fl,Math.max(800,fl+800));if(p.z<=fl&&p.vz<0)p.vz=0}
+  else if(p.z>fl+.5&&!(p.z-fl<3&&!(p.vz>0)&&!inCity(p.x,p.y))){p.vz=(p.vz||0)-560*dt;p.z+=p.vz*dt;if(p.z<=fl){if(p.vz<-420&&walkable(p.x,p.y))hurt((-p.vz-420)*.12);p.z=fl;p.vz=0}}else{p.z=fl;p.vz=0}
   const air=p.z>fl+2;p.air=air;const swim=!air&&!walkable(p.x,p.y);if(swim&&!p.swim)toast('🏊 Du schwimmst!');p.swim=swim;
   let mx=Math.cos(camYaw)*f+Math.cos(camYaw+Math.PI/2)*s,my=Math.sin(camYaw)*f+Math.sin(camYaw+Math.PI/2)*s;const l=hyp(mx,my);
   const sprinting=!air&&!swim&&sprint&&l>.15&&!p.exhausted&&p.stamina>0;
@@ -2071,7 +2071,7 @@ document.addEventListener('pointerdown',e=>{const t=e.target;if(t&&t.closest&&t.
 // ================= WANTED / FLOW =================
 const WANT=[0,1,1,2,3,4];const bustNeed=()=>stars<=1?2.8:2.2;
 function lostCops(){for(const c of cars)if(c.police&&(c.ctrl==='cop'||c.siren)){c.leave=true;c.siren=false;c.leavePt=null}}
-function plH(){const c=player.car;return c?(c.z||0):(player.z||0)}
+function plH(){const c=player.car,z=c?(c.z||0):(player.z||0);if(inCity(player.x,player.y))return z;const g=groundH(player.x,player.y);return z>g?z-g:(c?z:0)}
 function onRoof(){const pz=plH(),fl=floorAt(player.x,player.y,pz);return fl>25&&pz<=fl+4}
 function canSee(o,face,range){if(onRoof())return false;const pz=plH(),dx=player.x-o.x,dy=player.y-o.y,d=hyp(dx,dy);if(d>range)return false;if(d>70&&Math.abs(angDiff(face,Math.atan2(dy,dx)))>.62)return false;
   const n=Math.floor(d/24);for(let i=1;i<n;i++){const t=i/n,b=inBuilding(o.x+dx*t,o.y+dy*t);if(b&&b.H>pz+4)return false}return true}
@@ -2647,7 +2647,7 @@ const toggle=(id,label,val)=>'<div class="prow"><span>'+label+'</span><button cl
 const choice=(id,label,opts)=>'<div class="prow"><span>'+label+'</span><div class="chs">'+opts.map(o=>'<button class="ch'+(o===SET[id]?' on':'')+'" data-c="'+id+'" data-v="'+o+'">'+o+'</button>').join('')+'</div></div>';
 function renderPause(){document.querySelectorAll('#pause .ptabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===ptab));let h='';
   if(ptab==='main')h='<div class="pmain"><button class="btn" data-a="resume">▶ WEITERSPIELEN</button><div class="pquick"><button data-q="KeyP">📱 Handy</button><button data-q="KeyI">🎒 Inventar</button><button data-q="KeyM">🗺️ Karte</button><button data-q="KeyK">💻 Cheats</button></div><button class="pbtn" data-a="ctrl">🎮 Steuerung</button><button class="pbtn" data-a="gfx">🖥️ Grafik</button><button class="pbtn" data-a="snd">🔊 Ton</button><button class="pbtn" data-a="hud">📋 Anzeige</button>'+
-    '<button class="pbtn red" data-a="title">🏠 Zum Startbildschirm <small>(nicht Gespeichertes geht verloren)</small></button><div class="pver">Neon Bay 3D · Version 0.3.8 · Open Beta</div></div>';
+    '<button class="pbtn red" data-a="title">🏠 Zum Startbildschirm <small>(nicht Gespeichertes geht verloren)</small></button><div class="pver">Neon Bay 3D · Version 0.3.9 · Open Beta</div></div>';
   else if(ptab==='ctrl'){h=slider('sens','🖱️ Kamera-Empfindlichkeit',.3,2.5,.1)+toggle('invY','↕️ Kamera hoch/runter umdrehen',SET.invY)+toggle('autoCam','🎥 Kamera dreht automatisch mit',SET.autoCam)+(isTouch?slider('btn','👆 Größe der Touch-Buttons',.7,1.4,.05):'');
     h+='<div class="psec">⌨️ TASTENBELEGUNG – antippen und neue Taste drücken'+(isTouch?' (Tastatur nötig)':'')+'</div><div class="kgrid">'+ACTIONS.map(([a,n])=>'<button class="krow'+(rebindAct===a?' wait':'')+'" data-b="'+a+'"><span>'+n+'</span><kbd>'+(rebindAct===a?'Taste drücken…':keyName(SET.binds[a]||a))+'</kbd></button>').join('')+
       '</div><div class="pnote">Fest: Esc = Menü · 1–9 = Auswahl · Maus = Kamera'+(isTouch?' · Touch: links ziehen = laufen, rechts wischen = Kamera':'')+'</div><button class="pbtn" data-a="resetKeys">↩️ Tasten zurücksetzen</button>'}
