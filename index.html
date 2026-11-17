@@ -110,6 +110,7 @@ body.touch #touch{display:block}
 .tb.big{grid-column:3;grid-row:1/3;height:134px;border-radius:40px;font-size:34px;background:rgba(214,40,40,.55)}
 .tb.on{background:rgba(255,210,63,.6)}
 .tb.hid{visibility:hidden}
+#tbH,#tbJ{grid-column:2;grid-row:3}
 #ttop{position:absolute;left:12px;top:12px;display:flex;gap:8px;pointer-events:auto}
 .ts{width:44px;height:44px;border-radius:12px;border:2px solid rgba(255,255,255,.35);background:rgba(0,0,0,.5);color:#fff;font-size:20px}
 body.touch #help{left:50%;top:auto;bottom:230px;transform:translateX(-50%);max-width:80vw;text-align:center}
@@ -289,6 +290,7 @@ body.ingarage #touch,body.ingarage #mmhit,body.ingarage #help,body.ingarage .pro
     <button class="tb" data-k="KeyT" id="tbT">🚕</button>
     <button class="tb" data-k="ShiftLeft" id="tbS">🏃</button>
     <button class="tb" data-k="KeyH" id="tbH">📯</button>
+    <button class="tb" data-k="KeyJ" id="tbJ">🦘</button>
     <button class="tb hid" data-k="KeyG" id="tbG">🚨</button>
   </div>
 </div>
@@ -325,7 +327,7 @@ body.ingarage #touch,body.ingarage #mmhit,body.ingarage #help,body.ingarage .pro
     <input id="cinput" class="cin" maxlength="9" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Code tippen…"><div class="kp2"><button id="cx">✕ Abbrechen</button><button id="cok">✔ OK</button></div><div id="cmsg"></div></div>
   <div id="clist" style="display:none"><h2>🎮 CHEAT-MENÜ</h2><div id="ctg"></div><button class="gbtn back" id="cclose" style="width:100%;margin-top:10px">Schließen</button></div>
 </div></div>
-<div id="start" class="overlay"><div id="ver" style="position:absolute;left:12px;bottom:10px;font:700 13px system-ui;color:rgba(255,255,255,.75);background:rgba(0,0,0,.35);padding:4px 10px;border-radius:8px">Version 0.3.9 · Open Beta</div>
+<div id="start" class="overlay"><div id="ver" style="position:absolute;left:12px;bottom:10px;font:700 13px system-ui;color:rgba(255,255,255,.75);background:rgba(0,0,0,.35);padding:4px 10px;border-radius:8px">Version 0.3.10 · Open Beta</div>
   <div class="box">
     <h1>NEON BAY</h1>
     <div class="sub">3D · OPEN WORLD · WANTED LEVEL</div>
@@ -595,7 +597,7 @@ function roadCut(x,y){let m=null;const gx=Math.floor(x/100),gy=Math.floor(y/100)
 function mkGridB(st){const G={x0:LBX[0],y0:LBX[1],st};G.nx=Math.ceil((LBX[2]-LBX[0])/st)+1;G.ny=Math.ceil((LBX[3]-LBX[1])/st)+1;G.h=new Float32Array(G.nx*G.ny);
   for(let j=0;j<G.ny;j++)for(let i=0;i<G.nx;i++){const x=G.x0+i*st,y=G.y0+j*st;let h;
     if(inCity(x,y)){const din=Math.min(x,y,WORLD-x,WORLD-y);h=-.4-Math.min(3,din/15)}else{h=terrRaw(x,y);
-      if(h>-15){const dv=Math.hypot(x-VIEWP.x,y-VIEWP.y),de=Math.hypot(x-VIEWP.ex,y-VIEWP.ey);if(dv<VIEWP.r+4||de<40)h=VIEWP.h;else if(dv<VIEWP.r+70&&h>VIEWP.h){const w=1-(dv-VIEWP.r-4)/66;h=lerp(h,VIEWP.h,w*w*(3-2*w))}
+      if(h>-15){const dv=Math.hypot(x-VIEWP.x,y-VIEWP.y),de=Math.hypot(x-VIEWP.ex,y-VIEWP.ey);if(dv<VIEWP.r+4||de<40)h=VIEWP.h;else if(dv<VIEWP.r+70&&h>VIEWP.h){const w=1-(dv-VIEWP.r-4)/66;h=lerp(h,VIEWP.h,w*w*(3-2*w))}else if(dv<VIEWP.r+150&&h<VIEWP.h){const w=1-(dv-VIEWP.r-4)/146;h=Math.max(h,lerp(h,VIEWP.h-(dv-VIEWP.r-4)*.45,w*w*(3-2*w)))}
         for(const r of DHRECTS){if(x<r.x0-40||x>r.x1+40||y<r.y0-40||y>r.y1+40)continue;const dd=Math.max(r.x0-x,x-r.x1,r.y0-y,y-r.y1,0);if(dd<6){h=r.h;break}const w=1-(dd-6)/34;h=lerp(h,r.h,w*w*(3-2*w))}
         const rd=roadAt(x,y,100,null,12);let core=false;if(rd){const t=rd.h-.6,hw=rd.r.hw;if(rd.d<hw+8){h=t;core=true}else if(h<t){const w=1-(rd.d-hw-8)/37;if(w>0)h=lerp(h,t,w*w*(3-2*w))}else if(rd.d<hw+46)h=t;else{const w=1-(rd.d-hw-46)/55;if(w>0)h=lerp(h,t,w*w*(3-2*w))}}
         if(!core){const m=roadCut(x,y);if(m!=null&&h>m)h=m}}}G.h[j*G.nx+i]=h}return G}
@@ -604,7 +606,10 @@ const TG=mkGridB(16),TGI=TG,TGS=TG;
   const w=sh(-800,WORLD/2+300,-1,0);if(w)PIERS.push({x:w.x-200,y:w.y-17,w:228,h:34});const s2=sh(1150,WORLD+600,0,1);if(s2)PIERS.push({x:s2.x-17,y:s2.y-28,w:34,h:228})}
 function gridH(G,x,y){const fx=(x-G.x0)/G.st,fy=(y-G.y0)/G.st;if(fx<0||fy<0||fx>=G.nx-1||fy>=G.ny-1)return -20;const i=Math.floor(fx),j=Math.floor(fy),u=fx-i,v=fy-j,H=G.h,n=G.nx;
   return lerp(lerp(H[j*n+i],H[j*n+i+1],u),lerp(H[(j+1)*n+i],H[(j+1)*n+i+1],u),v)}
-function terrH(x,y){return gridH(TG,x,y)}
+let TFR=null;// Bereich mit feinem Geländenetz (in 32er-Zellen) – terrH folgt danach exakt dem sichtbaren Netz
+function triH(G,x,y,k){const st=G.st*k,fx=(x-G.x0)/st,fy=(y-G.y0)/st,mx=Math.floor((G.nx-1)/k),my=Math.floor((G.ny-1)/k);if(fx<0||fy<0||fx>=mx||fy>=my)return -20;const i=Math.floor(fx),j=Math.floor(fy),u=fx-i,v=fy-j,n=G.nx,H=G.h,h=(a,b)=>H[b*k*n+a*k];
+  if(u+v<1){const h0=h(i,j);return h0+(h(i+1,j)-h0)*u+(h(i,j+1)-h0)*v}const h3=h(i+1,j+1);return h3+(h(i,j+1)-h3)*(1-u)+(h(i+1,j)-h3)*(1-v)}
+function terrH(x,y){if(!TFR)return gridH(TG,x,y);const ci=(x-TG.x0)/32,cj=(y-TG.y0)/32;return triH(TG,x,y,ci>=TFR[0]&&ci<TFR[2]&&cj>=TFR[1]&&cj<TFR[3]?1:2)}
 // ---- extra buildings (Sandland) ----
 const EXB=[];function exb(x,y,w,h,ht,col,kind){const base=Math.max(0,terrH(x+w/2,y+h/2));const b={x,y,w,h,H:base+ht,base,col,kind};EXB.push(b);return b}
 // ---- Sprungschanzen ----
@@ -985,7 +990,7 @@ function buildWorld(){
     // Bergstraßen-Bereich fein (16er Raster), damit kein Gelände durch die Straße ragt
     let FR=null;{let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const r of ROADS){if(r.kind!=='serp'&&r.kind!=='elev')continue;for(const q of r.pts){x0=Math.min(x0,q.x);y0=Math.min(y0,q.y);x1=Math.max(x1,q.x);y1=Math.max(y1,q.y)}}
       if(x1>x0){const c=v=>Math.floor(v/32),NX=Math.floor((TG.nx-1)*TG.st/32),NY=Math.floor((TG.ny-1)*TG.st/32);FR=[clamp(c(x0-140-TG.x0),0,NX),clamp(c(y0-140-TG.y0),0,NY),clamp(c(x1+140-TG.x0)+1,0,NX),clamp(c(y1+140-TG.y0)+1,0,NY)]}}
-    const tCol=(h,x,z)=>{const nz=Math.sin(x*.05)*Math.cos(z*.043)*.06;if(shoreD(x,z)<200&&h<6)return[.9,.82,.6];const dw=desertW(x,z);if(dw>0){const nz2=Math.sin(x*.031)*Math.cos(z*.027)*.05;const g=[.4+nz,.6+nz,.28],sd=[.87+nz2,.75+nz2,.53+nz2];return[lerp(g[0],sd[0],dw),lerp(g[1],sd[1],dw),lerp(g[2],sd[2],dw)]}return h<130?[.38+nz,.6+nz,.27]:h<250?[.28+nz,.45+nz,.21]:h<300?[lerp(.28,.52,(h-250)/50)+nz,lerp(.45,.5,(h-250)/50)+nz,lerp(.21,.46,(h-250)/50)]:h<470?[.52+nz*1.5,.5+nz*1.5,.47+nz]:h<500?[lerp(.52,.93,(h-470)/30),lerp(.5,.94,(h-470)/30),lerp(.47,.96,(h-470)/30)]:[.93,.94,.96]};terrMesh(TG,32,tCol,null,FR);if(FR)terrMesh(TG,16,tCol,[FR[0]*2,FR[1]*2,FR[2]*2,FR[3]*2])}
+    const tCol=(h,x,z)=>{const nz=Math.sin(x*.05)*Math.cos(z*.043)*.06;if(shoreD(x,z)<200&&h<6)return[.9,.82,.6];const dw=desertW(x,z);if(dw>0){const nz2=Math.sin(x*.031)*Math.cos(z*.027)*.05;const g=[.4+nz,.6+nz,.28],sd=[.87+nz2,.75+nz2,.53+nz2];return[lerp(g[0],sd[0],dw),lerp(g[1],sd[1],dw),lerp(g[2],sd[2],dw)]}return h<130?[.38+nz,.6+nz,.27]:h<250?[.28+nz,.45+nz,.21]:h<300?[lerp(.28,.52,(h-250)/50)+nz,lerp(.45,.5,(h-250)/50)+nz,lerp(.21,.46,(h-250)/50)]:h<470?[.52+nz*1.5,.5+nz*1.5,.47+nz]:h<500?[lerp(.52,.93,(h-470)/30),lerp(.5,.94,(h-470)/30),lerp(.47,.96,(h-470)/30)]:[.93,.94,.96]};terrMesh(TG,32,tCol,null,FR);if(FR)terrMesh(TG,16,tCol,[FR[0]*2,FR[1]*2,FR[2]*2,FR[3]*2]);TFR=FR||[0,0,0,0]}
   // ===== Aussichtsplattform =====
   {const V=VIEWP,g=new THREE.Group(),y0=V.h,ang=Math.atan2(V.dy,V.dx);scene.add(g);
     const pl=new THREE.Mesh(new THREE.CylinderGeometry(V.r,V.r+8,90,32),mat('#a59d90'));pl.position.set(V.x,y0-44.2,V.y);pl.receiveShadow=true;g.add(pl);
@@ -1602,8 +1607,7 @@ function updateCar(c,dt){if(c.ctrl==='net')return;
   if(!inCity(c.x,c.y)&&!((c.z||0)>2)){if(!onExtra(c.x,c.y)){if(!waterCar(c,dt)){c.x=c.px;c.y=c.py;c.vx*=-.25;c.vy*=-.25}}
     else if(!c.air){const ca=Math.cos(c.a),sa=Math.sin(c.a),L2=c.spec.L/2,sl=(carGround(c,c.x+ca*L2,c.y+sa*L2)-carGround(c,c.x-ca*L2,c.y-sa*L2))/c.spec.L;c.vx-=ca*sl*300*dt;c.vy-=sa*sl*300*dt;
       if(!c.elev&&!roadAt(c.x,c.y,4)&&c.type!=='boat'){const gx=(groundH(c.x+6,c.y)-groundH(c.x-6,c.y))/12,gy=(groundH(c.x,c.y+6)-groundH(c.x,c.y-6))/12,m=Math.hypot(gx,gy);
-        if(m>.3){const k=m-.3,ux=gx/m,uy=gy/m;c.vx-=ux*k*1100*dt;c.vy-=uy*k*1100*dt;const fr=Math.max(0,1-k*3.5*dt);c.vx*=fr;c.vy*=fr}
-        if(sl>.55&&c.px!=null){const up=(c.x-c.px)*ca+(c.y-c.py)*sa;if(up>0){c.x=c.px;c.y=c.py;const f=c.vx*ca+c.vy*sa;if(f>0){c.vx-=ca*f*1.2;c.vy-=sa*f*1.2}}}}}}
+        if(m>.3){const k=m-.3,ux=gx/m,uy=gy/m;c.vx-=ux*k*650*dt;c.vy-=uy*k*650*dt;const fr=Math.max(0,1-k*2*dt);c.vx*=fr;c.vy*=fr}}}}
   if(c.type!=='boat'&&!((c.z||0)>2)){const st=roadAt(c.x,c.y,0,'elev');
     if(c.elev){if(!st){if((c.elevH||0)>4&&Math.abs(groundH(c.x,c.y)-(c.elevH||0))>4){c.x=c.px;c.y=c.py;c.vx*=-.3;c.vy*=-.3}else c.elev=false}else c.elevH=st.h}
     else if(st&&!c.air){const gh=groundH(c.x,c.y);if(st.h<gh+3.5){c.elev=true;c.elevH=st.h}else if(st.h<gh+26){c.x=c.px;c.y=c.py;c.vx*=-.3;c.vy*=-.3}}
@@ -1738,7 +1742,7 @@ function updatePlayer(dt){const p=player;p.hurtT=Math.max(0,p.hurtT-dt);p.fireT-
   const v=air?0:hyp(p.vx,p.vy);p.move=clamp(v/62,0,1.5);p.anim+=dt*v*.13;
   for(const q of peds)if(q.state!=='ko'&&q.state!=='down'){const d=d2(q,p);if(d<15&&d>.01){q.x+=(q.x-p.x)/d*(15-d)*.5;q.y+=(q.y-p.y)/d*(15-d)*.5}}
   const aiming=!isTouch&&keys.Aim&&!swim&&!mapOpen;p.aiming=aiming;if(aiming){p.a=camYaw;p.aimT=Math.max(p.aimT,.15)}
-  tap('KeyG');tap('KeyB');if(!isTouch&&!fly&&tap('Space')&&!air&&!swim&&!p.punchT){p.z=fl+1;p.vz=112;sfx.whoosh()}
+  tap('KeyG');tap('KeyB');{const jt=tap('KeyJ');if(!fly&&(jt||(!isTouch&&tap('Space')))&&!air&&!swim&&!p.punchT){p.z=fl+1;p.vz=112;sfx.whoosh()}}
   if((tap('Mouse')||(!fly&&isTouch&&tap('Space')))&&!mapOpen&&!swim)attack();
   if(WPN[p.weapon].auto&&(keys.Mouse||(!fly&&isTouch&&keys.Space))&&!mapOpen&&!swim)fireGun(p.weapon);
   if(p.punchT>0){p.punchT-=dt;const bat=p.weapon==='bat';if(!p.punchHit&&p.punchT<(bat?.2:.17)){p.punchHit=true;const rch=bat?22:18,hx=p.x+Math.cos(p.a)*rch,hy=p.y+Math.sin(p.a)*rch;let hit=null;
@@ -2485,7 +2489,7 @@ function hudDom(){intxTick();tachoTick();dtopTick();const m=Math.floor(player.mo
   const am=WPN[player.weapon].ammo,w=player.weapon+'|'+(am?(cheats.ammo?'∞':player.ammo[am]):'');if(w!==lastW){lastW=w;weapEl.innerHTML='<span class="wi">'+WNAME[player.weapon]+'</span><span>'+(am?(cheats.ammo?'∞':player.ammo[am])+(player.weapon==='grenade'?' Stk.':' Schuss'):'')+'</span>'}
   const hh=Math.floor(gameMin/60)%24,mi=Math.floor(gameMin%60),ts=String(hh).padStart(2,'0')+':'+String(mi).padStart(2,'0');clockEl.textContent=ts;if(phoneOpen){$('ptime').textContent=ts;$('ptitle').textContent=ts}
   if(isTouch){const pc=player.car,fly=pc?cheats.flyCar:cheats.fly,key=(pc?'c'+pc.type:'f'+player.weapon)+(mission?'m':'')+(fly?'F':'');if(key!==lastBtn){lastBtn=key;$('tbA').textContent=fly?'⬆️':pc?'🛑':WNAME[player.weapon];$('tbR').textContent=pc?'📻':'💰';$('tbF').textContent=pc?'🚪':'🚗';
-    $('tbQ').classList.toggle('hid',!!pc&&!fly);$('tbS').classList.toggle('hid',!!pc);$('tbH').classList.toggle('hid',!pc);$('tbG').classList.toggle('hid',!(pc&&(pc.police||pc.type==='fire')));$('tbQ').textContent=fly?'⬇️':'🔄';$('tbT').classList.toggle('hid',!(pc&&(pc.type==='taxi'||pc.type==='fire')));$('tbT').textContent=mission&&(mission.type==='taxi'||mission.type==='fire')&&mission.phase!=='get'?'⏹':pc&&pc.type==='fire'?'🚒':'🚕'}}
+    $('tbQ').classList.toggle('hid',!!pc&&!fly);$('tbS').classList.toggle('hid',!!pc);$('tbH').classList.toggle('hid',!pc);$('tbJ').classList.toggle('hid',!!pc||!!fly);$('tbG').classList.toggle('hid',!(pc&&(pc.police||pc.type==='fire')));$('tbQ').textContent=fly?'⬇️':'🔄';$('tbT').classList.toggle('hid',!(pc&&(pc.type==='taxi'||pc.type==='fire')));$('tbT').textContent=mission&&(mission.type==='taxi'||mission.type==='fire')&&mission.phase!=='get'?'⏹':pc&&pc.type==='fire'?'🚒':'🚕'}}
   let t='';if(state==='play'){
     if(player.bustT>0)t='🚨 <b>Festnahme!</b> Lauf weg!';else if(player.car&&player.car.burning)t='🔥 Das Fahrzeug brennt – raus mit <b>'+K('F','🚪')+'</b>!';
     else if(!player.car&&cheats.fly&&!player.air)t='🕊️ Fliegen: <b>'+K('Leertaste','⬆️')+'</b> hoch · <b>'+K('C','⬇️')+'</b> runter · <b>'+K('Shift','🏃')+'</b> schnell';
@@ -2647,7 +2651,7 @@ const toggle=(id,label,val)=>'<div class="prow"><span>'+label+'</span><button cl
 const choice=(id,label,opts)=>'<div class="prow"><span>'+label+'</span><div class="chs">'+opts.map(o=>'<button class="ch'+(o===SET[id]?' on':'')+'" data-c="'+id+'" data-v="'+o+'">'+o+'</button>').join('')+'</div></div>';
 function renderPause(){document.querySelectorAll('#pause .ptabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===ptab));let h='';
   if(ptab==='main')h='<div class="pmain"><button class="btn" data-a="resume">▶ WEITERSPIELEN</button><div class="pquick"><button data-q="KeyP">📱 Handy</button><button data-q="KeyI">🎒 Inventar</button><button data-q="KeyM">🗺️ Karte</button><button data-q="KeyK">💻 Cheats</button></div><button class="pbtn" data-a="ctrl">🎮 Steuerung</button><button class="pbtn" data-a="gfx">🖥️ Grafik</button><button class="pbtn" data-a="snd">🔊 Ton</button><button class="pbtn" data-a="hud">📋 Anzeige</button>'+
-    '<button class="pbtn red" data-a="title">🏠 Zum Startbildschirm <small>(nicht Gespeichertes geht verloren)</small></button><div class="pver">Neon Bay 3D · Version 0.3.9 · Open Beta</div></div>';
+    '<button class="pbtn red" data-a="title">🏠 Zum Startbildschirm <small>(nicht Gespeichertes geht verloren)</small></button><div class="pver">Neon Bay 3D · Version 0.3.10 · Open Beta</div></div>';
   else if(ptab==='ctrl'){h=slider('sens','🖱️ Kamera-Empfindlichkeit',.3,2.5,.1)+toggle('invY','↕️ Kamera hoch/runter umdrehen',SET.invY)+toggle('autoCam','🎥 Kamera dreht automatisch mit',SET.autoCam)+(isTouch?slider('btn','👆 Größe der Touch-Buttons',.7,1.4,.05):'');
     h+='<div class="psec">⌨️ TASTENBELEGUNG – antippen und neue Taste drücken'+(isTouch?' (Tastatur nötig)':'')+'</div><div class="kgrid">'+ACTIONS.map(([a,n])=>'<button class="krow'+(rebindAct===a?' wait':'')+'" data-b="'+a+'"><span>'+n+'</span><kbd>'+(rebindAct===a?'Taste drücken…':keyName(SET.binds[a]||a))+'</kbd></button>').join('')+
       '</div><div class="pnote">Fest: Esc = Menü · 1–9 = Auswahl · Maus = Kamera'+(isTouch?' · Touch: links ziehen = laufen, rechts wischen = Kamera':'')+'</div><button class="pbtn" data-a="resetKeys">↩️ Tasten zurücksetzen</button>'}
