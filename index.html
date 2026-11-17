@@ -325,7 +325,7 @@ body.ingarage #touch,body.ingarage #mmhit,body.ingarage #help,body.ingarage .pro
     <input id="cinput" class="cin" maxlength="9" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Code tippen…"><div class="kp2"><button id="cx">✕ Abbrechen</button><button id="cok">✔ OK</button></div><div id="cmsg"></div></div>
   <div id="clist" style="display:none"><h2>🎮 CHEAT-MENÜ</h2><div id="ctg"></div><button class="gbtn back" id="cclose" style="width:100%;margin-top:10px">Schließen</button></div>
 </div></div>
-<div id="start" class="overlay"><div id="ver" style="position:absolute;left:12px;bottom:10px;font:700 13px system-ui;color:rgba(255,255,255,.75);background:rgba(0,0,0,.35);padding:4px 10px;border-radius:8px">Version 0.3.7 · Open Beta</div>
+<div id="start" class="overlay"><div id="ver" style="position:absolute;left:12px;bottom:10px;font:700 13px system-ui;color:rgba(255,255,255,.75);background:rgba(0,0,0,.35);padding:4px 10px;border-radius:8px">Version 0.3.8 · Open Beta</div>
   <div class="box">
     <h1>NEON BAY</h1>
     <div class="sub">3D · OPEN WORLD · WANTED LEVEL</div>
@@ -1600,7 +1600,10 @@ function updateCar(c,dt){if(c.ctrl==='net')return;
   if(c.type==='boat'){boatBound(c);const sp=hyp(c.vx,c.vy);if(sp>50&&R()<dt*30){const bx=c.x-Math.cos(c.a)*c.spec.L*.5,by=c.y-Math.sin(c.a)*c.spec.L*.5;part({x:bx+rr(-6,6),y:by+rr(-6,6),z:-1,vx:rr(-20,20),vy:rr(-20,20),vz:rr(5,20),life:1,max:1,size:rr(2,3.5),grow:3,color:'#e8f6ff'})}return}
   carBuild(c);
   if(!inCity(c.x,c.y)&&!((c.z||0)>2)){if(!onExtra(c.x,c.y)){if(!waterCar(c,dt)){c.x=c.px;c.y=c.py;c.vx*=-.25;c.vy*=-.25}}
-    else if(!c.air){const ca=Math.cos(c.a),sa=Math.sin(c.a),L2=c.spec.L/2,sl=(carGround(c,c.x+ca*L2,c.y+sa*L2)-carGround(c,c.x-ca*L2,c.y-sa*L2))/c.spec.L;c.vx-=ca*sl*300*dt;c.vy-=sa*sl*300*dt}}
+    else if(!c.air){const ca=Math.cos(c.a),sa=Math.sin(c.a),L2=c.spec.L/2,sl=(carGround(c,c.x+ca*L2,c.y+sa*L2)-carGround(c,c.x-ca*L2,c.y-sa*L2))/c.spec.L;c.vx-=ca*sl*300*dt;c.vy-=sa*sl*300*dt;
+      if(!c.elev&&!roadAt(c.x,c.y,4)&&c.type!=='boat'){const gx=(groundH(c.x+6,c.y)-groundH(c.x-6,c.y))/12,gy=(groundH(c.x,c.y+6)-groundH(c.x,c.y-6))/12,m=Math.hypot(gx,gy);
+        if(m>.3){const k=m-.3,ux=gx/m,uy=gy/m;c.vx-=ux*k*1100*dt;c.vy-=uy*k*1100*dt;const fr=Math.max(0,1-k*3.5*dt);c.vx*=fr;c.vy*=fr}
+        if(sl>.55&&c.px!=null){const up=(c.x-c.px)*ca+(c.y-c.py)*sa;if(up>0){c.x=c.px;c.y=c.py;const f=c.vx*ca+c.vy*sa;if(f>0){c.vx-=ca*f*1.2;c.vy-=sa*f*1.2}}}}}}
   if(c.type!=='boat'&&!((c.z||0)>2)){const st=roadAt(c.x,c.y,0,'elev');
     if(c.elev){if(!st){if((c.elevH||0)>4&&Math.abs(groundH(c.x,c.y)-(c.elevH||0))>4){c.x=c.px;c.y=c.py;c.vx*=-.3;c.vy*=-.3}else c.elev=false}else c.elevH=st.h}
     else if(st&&!c.air){const gh=groundH(c.x,c.y);if(st.h<gh+3.5){c.elev=true;c.elevH=st.h}else if(st.h<gh+26){c.x=c.px;c.y=c.py;c.vx*=-.3;c.vy*=-.3}}
@@ -2644,7 +2647,7 @@ const toggle=(id,label,val)=>'<div class="prow"><span>'+label+'</span><button cl
 const choice=(id,label,opts)=>'<div class="prow"><span>'+label+'</span><div class="chs">'+opts.map(o=>'<button class="ch'+(o===SET[id]?' on':'')+'" data-c="'+id+'" data-v="'+o+'">'+o+'</button>').join('')+'</div></div>';
 function renderPause(){document.querySelectorAll('#pause .ptabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===ptab));let h='';
   if(ptab==='main')h='<div class="pmain"><button class="btn" data-a="resume">▶ WEITERSPIELEN</button><div class="pquick"><button data-q="KeyP">📱 Handy</button><button data-q="KeyI">🎒 Inventar</button><button data-q="KeyM">🗺️ Karte</button><button data-q="KeyK">💻 Cheats</button></div><button class="pbtn" data-a="ctrl">🎮 Steuerung</button><button class="pbtn" data-a="gfx">🖥️ Grafik</button><button class="pbtn" data-a="snd">🔊 Ton</button><button class="pbtn" data-a="hud">📋 Anzeige</button>'+
-    '<button class="pbtn red" data-a="title">🏠 Zum Startbildschirm <small>(nicht Gespeichertes geht verloren)</small></button><div class="pver">Neon Bay 3D · Version 0.3.7 · Open Beta</div></div>';
+    '<button class="pbtn red" data-a="title">🏠 Zum Startbildschirm <small>(nicht Gespeichertes geht verloren)</small></button><div class="pver">Neon Bay 3D · Version 0.3.8 · Open Beta</div></div>';
   else if(ptab==='ctrl'){h=slider('sens','🖱️ Kamera-Empfindlichkeit',.3,2.5,.1)+toggle('invY','↕️ Kamera hoch/runter umdrehen',SET.invY)+toggle('autoCam','🎥 Kamera dreht automatisch mit',SET.autoCam)+(isTouch?slider('btn','👆 Größe der Touch-Buttons',.7,1.4,.05):'');
     h+='<div class="psec">⌨️ TASTENBELEGUNG – antippen und neue Taste drücken'+(isTouch?' (Tastatur nötig)':'')+'</div><div class="kgrid">'+ACTIONS.map(([a,n])=>'<button class="krow'+(rebindAct===a?' wait':'')+'" data-b="'+a+'"><span>'+n+'</span><kbd>'+(rebindAct===a?'Taste drücken…':keyName(SET.binds[a]||a))+'</kbd></button>').join('')+
       '</div><div class="pnote">Fest: Esc = Menü · 1–9 = Auswahl · Maus = Kamera'+(isTouch?' · Touch: links ziehen = laufen, rechts wischen = Kamera':'')+'</div><button class="pbtn" data-a="resetKeys">↩️ Tasten zurücksetzen</button>'}
@@ -2764,7 +2767,8 @@ function spawnPed(minD){const near=SWALK.filter(w=>Math.abs(w.cx-player.x)<1600&
     if(peds.some(o=>Math.abs(o.x-x)<45&&Math.abs(o.y-y)<45))continue;const p=makePed(x,y);p.blk=w;p.t=t;p.dirS=R()<.5?1:-1;peds.push(p);return}}
 function sidewalkPoint(minD,maxD){for(let k=0;k<80;k++){const w=SWALK[ri(0,SWALK.length-1)],[x,y]=perim(w,rr(0,w.L)),d=hyp(x-player.x,y-player.y);if(d>=minD&&d<=maxD)return{x,y}}const w=SWALK[ri(0,SWALK.length-1)],[x,y]=perim(w,rr(0,w.L));return{x,y}}
 function groundH(x,y){const rp=rampH(x,y);if(rp!=null)return rp;
-  if(!inCity(x,y)){const rd=roadAt(x,y,0,null,12);if(rd)return rd.h;for(const q of PIERS)if(x>q.x&&x<q.x+q.w&&y>q.y&&y<q.y+q.h)return 3;const t=terrH(x,y);if(t>-.5)return t;return -.5}return 0}
+  if(!inCity(x,y)){{const V=VIEWP,dx=x-V.x,dy=y-V.y;if(dx*dx+dy*dy<(V.r+1)*(V.r+1))return V.h+.9;const ux=V.x-V.ex,uy=V.y-V.ey,L=Math.hypot(ux,uy)||1,t=((x-V.ex)*ux+(y-V.ey)*uy)/L;if(t>0&&t<L&&Math.abs(((x-V.ex)*uy-(y-V.ey)*ux)/L)<19)return V.h+.9}
+    const rd=roadAt(x,y,0,null,12);if(rd)return rd.h;for(const q of PIERS)if(x>q.x&&x<q.x+q.w&&y>q.y&&y<q.y+q.h)return 3;const t=terrH(x,y);if(t>-.5)return t;return -.5}return 0}
 // ---- Autos im Wasser: sinken statt unsichtbarer Wand ----
 function waterCar(c,dt){if(c.type==='boat')return false;if(walkable(c.x,c.y)){c.sink=0;if(c.lift<0)c.lift=0;return true}
   if(!c.sink){const pr=roadAt(c.px,c.py,0);if(pr&&pr.h>3&&!(c.z>2))return false}
