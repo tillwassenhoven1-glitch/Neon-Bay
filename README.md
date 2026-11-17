@@ -7,7 +7,7 @@
 👉 **https://tillwassenhoven1-glitch.github.io/Neon-Bay/**
 
 Keine Installation, kein Konto nötig – läuft auf Handy, iPad und PC. 🎮
-*Version 0.3.6 · Open Beta*
+*Version 0.3.7 · Open Beta*
 
 ---
 
@@ -27,6 +27,7 @@ Keine Installation, kein Konto nötig – läuft auf Handy, iPad und PC. 🎮
 - 🌊 Autos, die ins Wasser fallen, gehen unter – du schwimmst raus
 - 💥 Schönere Unfälle: weiche Dellen, Lackschäden, echter Rauch & Feuer
 - 🛣️ **Autobahn A1** als Ring um die ganze Stadt – 3 breite Spuren und Verkehr, der überholt
+- 🌉 **Autobahnkreuz Berge**: die Bergstraße führt als Brücke über die A1, mit Auffahrten Richtung Norden und Süden
 - 📏 Realistische Proportionen: Figuren, Autos, Türen und Häuser passen zueinander
 - 🚦 Ampeln & 🛑 Stoppschilder – KI-Autos halten an, blinken und fahren nicht ineinander
 - 🌉 Südbrücke (Schrägseilbrücke) zur A1, ⤴️ Sprungschanzen und zerstörbare Zäune
